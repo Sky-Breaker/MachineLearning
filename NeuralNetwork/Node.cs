@@ -12,17 +12,9 @@ namespace NeuralNetwork
     /// </summary>
     public class Node
     {
-        public float[] Weights
-        {
-            get;
-            set;
-        }
+        public float[] Weights;
 
-        public float Bias
-        {
-            get;
-            set;
-        }
+        public float Bias;
 
         public Node(int nOfInputs)
         {
@@ -70,6 +62,7 @@ namespace NeuralNetwork
             Weights = newWeights;
         }
 
+        /*
         /// <summary>
         /// Sets the biases of the node to the new ones given.
         /// </summary>
@@ -78,6 +71,6 @@ namespace NeuralNetwork
         {
             Bias = newBias;
         }
-
+        */
     }
 }
