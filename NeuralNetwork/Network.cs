@@ -19,7 +19,7 @@ namespace NeuralNetwork
         {
             if (layerSizes.Length < 2)
             {
-                throw new ArgumentException("Cannot create a network with less than 1 layer. layerSizes must be > 2. ",nameof(layerSizes));
+                throw new ArgumentException("Cannot create a network with less than 1 layer. layerSizes must be > 2. ", nameof(layerSizes));
             }
 
             // layerSizes contains the input size, so the amount of Layers in the network is one less than the length of layerSizes
@@ -55,17 +55,41 @@ namespace NeuralNetwork
             return Layers[0].GetAllLayerValues(new float[][] { inputValues });
         }
 
-
-        public void TrainNetwork()
-        {
-
-        }
-
-        private void BackpropogateNetwork(float[] inputValues, float[] desiredOutputValues)
+        /*
+        public void TrainNetwork(float[] inputValues, float[] desiredOutputValues)
         {
             float[][] nodeValues = GetAllNetworkValues(inputValues);
-        }
 
+            float[,][] gradient = new float[nodeValues.Length,2][];
+
+            float[] cost = new float[nodeValues[nodeValues.Length - 1].Length];
+            for (int i = 0; i < cost.Length; i++)
+            {
+                cost[i] = 2 * (nodeValues[nodeValues.Length - 1][i] - desiredOutputValues[i]);
+            }
+
+            float[] partialDeriv = new float[nodeValues[nodeValues.Length - 1].Length];
+            for (int l = nodeValues.Length - 1; l >= 0; l--)
+            {
+                for (int n = 0; n < nodeValues[l].Length; n++)
+                {
+                    partialDeriv[n] = CalculateSigmoidDerivative(nodeValues[l][n]) * cost[n];
+
+                    gradient[l, 1][n] =
+                }
+            }
+        }
+        */
+
+        // private float[][,] BackpropogateNetwork(float[] derivativesOfCostsToNextLayerActivation, float[][] networkValues)
+        // {
+        //     
+        // }
+        private float CalculateSigmoidDerivative(float x)
+        {
+            float eToX = MathF.Exp(x);
+            return eToX / MathF.Pow(eToX + 1, 2);
+        }
 
         private void SetRandomStartingWeightsAndBiases(Node node)
         {
@@ -83,7 +107,7 @@ namespace NeuralNetwork
 
             var randBias = randomizer.NextSingle();
             node.SetWeights(randWeights);
-            node.SetBias(randBias);
+            node.Bias = randBias;
         }
     }
 }
