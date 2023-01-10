@@ -92,19 +92,17 @@ namespace NeuralNetwork
             {
                 layerBiasGradients = new float[nodeValues[l].Length];
                 layerWeightGradients = new float[nodeValues[l].Length, nodeValues[l - 1].Length];
+                float[] newDerivs = new float[nodeValues[l].Length];
                 for (int n = 0; n < nodeValues[l].Length; n++)
                 {
                     // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
                     // take sum of partial derivs to corresponding weights
                     // also this partial deriv = bias gradient, so it gets stored
-                    float newDeriv = 0;
                     for (int f = 0; f < nodeValues[l + 1].Length; f++) {
-                        newDeriv = stackedDerivs[f] * nodeValues[l + 1][f];
+                        newDerivs[f] = newDerivs[f] + stackedDerivs[f] * nodeValues[l + 1][f];
                     }
-                    stackedDerivs[n] = newDeriv;
-                    stackedDerivs[n] *= CalculateSigmoidDerivative(nodeValues[l][n]);
-
-                    layerBiasGradients[n] = stackedDerivs[n];
+                    newDerivs[n] *= CalculateSigmoidDerivative(nodeValues[l][n]);
+                    layerBiasGradients[n] = newDerivs[n];
                     for (int p = 0; p < nodeValues[l - 1].Length; p++)
                     {
                         layerWeightGradients[n, p] = stackedDerivs[n] * nodeValues[l - 1][p];
