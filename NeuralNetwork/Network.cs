@@ -88,8 +88,10 @@ namespace NeuralNetwork
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
 
-            for (int l = nodeValues.Length - 2; l >= 0; l--)
+            for (int l = nodeValues.Length - 2; l > 0; l--)
             {
+                layerBiasGradients = new float[nodeValues[l].Length];
+                layerWeightGradients = new float[l, nodeValues[l - 1].Length];
                 for (int n = 0; n < nodeValues[l].Length; n++)
                 {
                     // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
@@ -100,8 +102,19 @@ namespace NeuralNetwork
                         newDeriv = stackedDerivs[f] * nodeValues[l + 1][f];
                     }
                     stackedDerivs[n] = newDeriv;
+                    stackedDerivs[n] *= CalculateSigmoidDerivative(nodeValues[l][n]);
+
+                    layerBiasGradients[n] = stackedDerivs[n];
+                    for (int p = 0; p < nodeValues[l - 1].Length; p++)
+                    {
+                        layerWeightGradients[n, p] = stackedDerivs[n] * nodeValues[l - 1][p];
+                    }
                 }
+                resultLayerGradients[l] = new LayerGradient(layerBiasGradients, layerWeightGradients);
             }
+
+            resultNetworkGradient = new NetworkGradient(resultLayerGradients);
+            return resultNetworkGradient;
         }
 
         private class NetworkGradient
