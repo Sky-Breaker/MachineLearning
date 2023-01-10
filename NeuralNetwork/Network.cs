@@ -60,7 +60,7 @@ namespace NeuralNetwork
             
         }
 
-        private NetworkGradient BackpropagateNetwork(float[] inputValues, float[] desiredOutputValues)
+        public NetworkGradient BackpropagateNetwork(float[] inputValues, float[] desiredOutputValues)
         {
             float[][] nodeValues = GetAllNetworkValues(inputValues);
             
@@ -91,7 +91,7 @@ namespace NeuralNetwork
             for (int l = nodeValues.Length - 2; l > 0; l--)
             {
                 layerBiasGradients = new float[nodeValues[l].Length];
-                layerWeightGradients = new float[l, nodeValues[l - 1].Length];
+                layerWeightGradients = new float[nodeValues[l].Length, nodeValues[l - 1].Length];
                 for (int n = 0; n < nodeValues[l].Length; n++)
                 {
                     // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
@@ -117,7 +117,7 @@ namespace NeuralNetwork
             return resultNetworkGradient;
         }
 
-        private class NetworkGradient
+        public class NetworkGradient
         {
             public LayerGradient[] LayerGradients
             {
@@ -131,7 +131,7 @@ namespace NeuralNetwork
             }
         }
 
-        private class LayerGradient
+        public class LayerGradient
         {
             public float[] BiasGradients
             {

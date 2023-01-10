@@ -9,7 +9,7 @@ namespace NeuralNetwork
             // Console.WriteLine("Hello. My name is JARVIS.");
             var randomizer = new Random();
 
-            var networkSize = new int[4] { 10, 4, 3, 3};
+            var networkSize = new int[4] { 784, 20, 16, 10 };
 
             var testNetwork = new Network(networkSize);
 
@@ -61,6 +61,7 @@ namespace NeuralNetwork
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath);
             String testOutput = "";
+            float[] backpropTestImage = new float[28 * 28];
             for (int i = 0; i < 28; i++)
             {
                 for (int j = 0; j < 28; j++) {
@@ -73,12 +74,15 @@ namespace NeuralNetwork
                     {
                         testOutput += " ";
                     }
+                    backpropTestImage[28*i+j] = trainingData.TrainingImages[18, j, i];
                 }
                 testOutput += "\n";
             }
 
             Console.Write(testOutput);
 
+            float[] expectedValues = { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+            testNetwork.BackpropagateNetwork(backpropTestImage, expectedValues);
             /*
             var randomizer = new Random();
             var inputSize = 6;
