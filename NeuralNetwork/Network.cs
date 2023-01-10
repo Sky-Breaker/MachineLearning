@@ -60,23 +60,34 @@ namespace NeuralNetwork
             
         }
 
-        private NetworkGradient BackpropogateNetwork(float[] inputValues, float[] desiredOutputValues)
+        private NetworkGradient BackpropagateNetwork(float[] inputValues, float[] desiredOutputValues)
         {
             float[][] nodeValues = GetAllNetworkValues(inputValues);
+            
+            int layerLength = nodeValues[nodeValues.Length - 1].Length;
             NetworkGradient resultNetworkGradient;
-            LayerGradient[] resultLayerGradients;
+            LayerGradient[] resultLayerGradients = new LayerGradient[nodeValues.Length];
 
-            float[] outputError = new float[nodeValues[nodeValues.Length - 1].Length];
-            float[] stackedDerivs = new float[nodeValues[nodeValues.Length - 1].Length];
-            for (int i = 0; i < outputError.Length; i++)
+            float[] outputError = new float[layerLength];
+            float[] stackedDerivs = new float[layerLength];
+
+            // float arrays for bias and weight gradients in each layer
+            float[] layerBiasGradients = new float[layerLength];
+            float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
+
+            for (int i = 0; i < layerLength; i++)
             {
                 outputError[i] = nodeValues[nodeValues.Length - 1][i] - desiredOutputValues[i];
                 stackedDerivs[i] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][i]) * 2 * outputError[i];
+                layerBiasGradients[i] = stackedDerivs[i];
+                for (int p = 0; p < nodeValues[nodeValues.Length - 2].Length; p++)
+                {
+                    layerWeightGradients[i, p] = stackedDerivs[i] * nodeValues[nodeValues.Length - 2][p];
+                }
             }
 
-            // float arrays for bias and weight gradients in each layer
-            float[] layerBiasGradients;
-            float[,] layerWeightGradients;
+            resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
+
             for (int l = nodeValues.Length - 1; l >= 0; l--)
             {
                 for (int n = 0; n < nodeValues[l].Length; n++)
