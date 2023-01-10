@@ -55,37 +55,71 @@ namespace NeuralNetwork
             return Layers[0].GetAllLayerValues(new float[][] { inputValues });
         }
 
-        /*
-        public void TrainNetwork(float[] inputValues, float[] desiredOutputValues)
+        public void TrainNetwork()
+        {
+            
+        }
+
+        private NetworkGradient BackpropogateNetwork(float[] inputValues, float[] desiredOutputValues)
         {
             float[][] nodeValues = GetAllNetworkValues(inputValues);
+            NetworkGradient resultNetworkGradient;
+            LayerGradient[] resultLayerGradients;
 
-            float[,][] gradient = new float[nodeValues.Length,2][];
-
-            float[] cost = new float[nodeValues[nodeValues.Length - 1].Length];
-            for (int i = 0; i < cost.Length; i++)
+            float[] outputError = new float[nodeValues[nodeValues.Length - 1].Length];
+            for (int i = 0; i < outputError.Length; i++)
             {
-                cost[i] = 2 * (nodeValues[nodeValues.Length - 1][i] - desiredOutputValues[i]);
+                outputError[i] = nodeValues[nodeValues.Length - 1][i] - desiredOutputValues[i];
             }
 
-            float[] partialDeriv = new float[nodeValues[nodeValues.Length - 1].Length];
+            float[] partialDerivsCostToNodeSum = new float[nodeValues[nodeValues.Length - 1].Length];
+            // float arrays for bias and weight gradients in each layer
             for (int l = nodeValues.Length - 1; l >= 0; l--)
             {
                 for (int n = 0; n < nodeValues[l].Length; n++)
                 {
-                    partialDeriv[n] = CalculateSigmoidDerivative(nodeValues[l][n]) * cost[n];
-
-                    gradient[l, 1][n] =
+                    partialDerivsCostToNodeSum[n] = CalculateSigmoidDerivative(nodeValues[l][n]) * 2 * outputError[n];
+                    // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
                 }
             }
         }
-        */
 
-        // private float[][,] BackpropogateNetwork(float[] derivativesOfCostsToNextLayerActivation, float[][] networkValues)
-        // {
-        //     
-        // }
-        private float CalculateSigmoidDerivative(float x)
+        private class NetworkGradient
+        {
+            public LayerGradient[] LayerGradients
+            {
+                get;
+                set;
+            }
+
+            public NetworkGradient(LayerGradient[] layerGradients)
+            {
+                LayerGradients = layerGradients;
+            }
+        }
+
+        private class LayerGradient
+        {
+            public float[] BiasGradients
+            {
+                get; 
+                set;
+            }
+
+            public float[,] WeightGradients
+            {
+                get;
+                set;
+            }
+
+            public LayerGradient(float[] biasGradients, float[,] weightGradients)
+            {
+                BiasGradients = biasGradients;
+                WeightGradients = weightGradients;
+            }
+        }
+
+        private static float CalculateSigmoidDerivative(float x)
         {
             float eToX = MathF.Exp(x);
             return eToX / MathF.Pow(eToX + 1, 2);
