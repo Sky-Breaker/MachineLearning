@@ -67,19 +67,23 @@ namespace NeuralNetwork
             LayerGradient[] resultLayerGradients;
 
             float[] outputError = new float[nodeValues[nodeValues.Length - 1].Length];
+            float[] stackedDerivs = new float[nodeValues[nodeValues.Length - 1].Length];
             for (int i = 0; i < outputError.Length; i++)
             {
                 outputError[i] = nodeValues[nodeValues.Length - 1][i] - desiredOutputValues[i];
+                stackedDerivs[i] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][i]) * 2 * outputError[i];
             }
 
-            float[] partialDerivsCostToNodeSum = new float[nodeValues[nodeValues.Length - 1].Length];
             // float arrays for bias and weight gradients in each layer
+            float[] layerBiasGradients;
+            float[,] layerWeightGradients;
             for (int l = nodeValues.Length - 1; l >= 0; l--)
             {
                 for (int n = 0; n < nodeValues[l].Length; n++)
                 {
-                    partialDerivsCostToNodeSum[n] = CalculateSigmoidDerivative(nodeValues[l][n]) * 2 * outputError[n];
                     // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
+                    // take sum of partial derivs to corresponding weights
+                    // also this partial deriv = bias gradient, so it gets stored
                 }
             }
         }
