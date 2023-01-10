@@ -27,10 +27,12 @@ namespace NeuralNetwork
             var inputString = "Inputs: ";
             var outputString = "Outputs: ";
 
+            /*
             for (int i = 0; i < networkSize[0]; i++)
             {
                 inputString += inputs[i] + ", ";
             }
+            */
 
             /*
             for (int i = 0; i < outputs.Length; i++)
