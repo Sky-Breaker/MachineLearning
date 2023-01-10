@@ -88,13 +88,18 @@ namespace NeuralNetwork
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
 
-            for (int l = nodeValues.Length - 1; l >= 0; l--)
+            for (int l = nodeValues.Length - 2; l >= 0; l--)
             {
                 for (int n = 0; n < nodeValues[l].Length; n++)
                 {
                     // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
                     // take sum of partial derivs to corresponding weights
                     // also this partial deriv = bias gradient, so it gets stored
+                    float newDeriv = 0;
+                    for (int f = 0; f < nodeValues[l + 1].Length; f++) {
+                        newDeriv = stackedDerivs[f] * nodeValues[l + 1][f];
+                    }
+                    stackedDerivs[n] = newDeriv;
                 }
             }
         }
