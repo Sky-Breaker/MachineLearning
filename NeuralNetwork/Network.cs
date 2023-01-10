@@ -105,9 +105,10 @@ namespace NeuralNetwork
                     layerBiasGradients[n] = newDerivs[n];
                     for (int p = 0; p < nodeValues[l - 1].Length; p++)
                     {
-                        layerWeightGradients[n, p] = stackedDerivs[n] * nodeValues[l - 1][p];
+                        layerWeightGradients[n, p] = newDerivs[n] * nodeValues[l - 1][p];
                     }
                 }
+                stackedDerivs = newDerivs;
                 resultLayerGradients[l] = new LayerGradient(layerBiasGradients, layerWeightGradients);
             }
 
