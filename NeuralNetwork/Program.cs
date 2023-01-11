@@ -65,7 +65,7 @@ namespace NeuralNetwork
             for (int i = 0; i < 28; i++)
             {
                 for (int j = 0; j < 28; j++) {
-                    Boolean PixelIsOn = trainingData.TrainingImages[18, j, i] > 0;
+                    Boolean PixelIsOn = trainingData.TrainingImages[18, i * 28 + j] > 0;
                     if (PixelIsOn)
                     {
                         testOutput += "*";
@@ -74,7 +74,7 @@ namespace NeuralNetwork
                     {
                         testOutput += " ";
                     }
-                    backpropTestImage[28*i+j] = trainingData.TrainingImages[18, j, i];
+                    backpropTestImage[28*i+j] = trainingData.TrainingImages[18, i * 28 + j];
                 }
                 testOutput += "\n";
             }
@@ -82,7 +82,7 @@ namespace NeuralNetwork
             Console.Write(testOutput);
 
             float[] expectedValues = { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
-            testNetwork.BackpropagateNetwork(backpropTestImage, expectedValues);
+            Network.NetworkGradient testg = testNetwork.BackpropagateNetwork(backpropTestImage, expectedValues);
             /*
             var randomizer = new Random();
             var inputSize = 6;

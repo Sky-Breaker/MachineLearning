@@ -9,7 +9,7 @@ namespace NeuralNetwork
 {
     public class TrainingDataReader
     {
-        public byte[,,] TrainingImages;
+        public byte[,] TrainingImages;
         public byte[] TrainingLabels;
 
         public int ImageSize;
@@ -24,15 +24,15 @@ namespace NeuralNetwork
             TrainingLabels = PrepareLabelData(trainingLabelsBytes);
         }
 
-        private byte[,,] PrepareImageData(byte[] trainingImagesBytes)
+        private byte[,] PrepareImageData(byte[] trainingImagesBytes)
         {
-            byte[,,] trainingImageData = new byte[60000, ImageSize, ImageSize];
+            byte[,] trainingImageData = new byte[60000, ImageSize * ImageSize];
             for (int i = 16; i < trainingImagesBytes.Length; i++)
             {
                 int currentImage = (i - 16) / (ImageSize * ImageSize);
-                int pixelX = (i - 16) % ImageSize;
-                int pixelY = ((i - 16) / ImageSize + 1) % ImageSize;
-                trainingImageData[currentImage, pixelX, pixelY] = trainingImagesBytes[i];
+                int pixelX = (i - 16) % (ImageSize * ImageSize);
+                //int pixelY = ((i - 16) / ImageSize + 1) % ImageSize;
+                trainingImageData[currentImage, pixelX] = trainingImagesBytes[i];
             }
             return trainingImageData;
         }
