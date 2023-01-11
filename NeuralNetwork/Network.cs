@@ -99,7 +99,7 @@ namespace NeuralNetwork
                     // take sum of partial derivs to corresponding weights
                     // also this partial deriv = bias gradient, so it gets stored
                     for (int f = 0; f < nodeValues[l + 1].Length; f++) {
-                        newDerivs[f] = newDerivs[f] + stackedDerivs[f] * nodeValues[l + 1][f];
+                        newDerivs[f] = newDerivs[f] + stackedDerivs[f] * Layers[l + 1].Nodes[f].Weights[n];
                     }
                     newDerivs[n] *= CalculateSigmoidDerivative(nodeValues[l][n]);
                     layerBiasGradients[n] = newDerivs[n];
