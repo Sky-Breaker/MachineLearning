@@ -66,7 +66,7 @@ namespace NeuralNetwork
             
             int layerLength = nodeValues[nodeValues.Length - 1].Length;
             NetworkGradient resultNetworkGradient;
-            LayerGradient[] resultLayerGradients = new LayerGradient[nodeValues.Length];
+            LayerGradient[] resultLayerGradients = new LayerGradient[nodeValues.Length - 1];
 
             float[] outputError = new float[layerLength];
             float[] stackedDerivs = new float[layerLength];
@@ -75,14 +75,14 @@ namespace NeuralNetwork
             float[] layerBiasGradients = new float[layerLength];
             float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
 
-            for (int i = 0; i < layerLength; i++)
+            for (int n = 0; n < layerLength; n++)
             {
-                outputError[i] = nodeValues[nodeValues.Length - 1][i] - desiredOutputValues[i];
-                stackedDerivs[i] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][i]) * 2 * outputError[i];
-                layerBiasGradients[i] = stackedDerivs[i];
+                outputError[n] = nodeValues[nodeValues.Length - 1][n] - desiredOutputValues[n];
+                stackedDerivs[n] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][n]) * 2 * outputError[n];
+                layerBiasGradients[n] = stackedDerivs[n];
                 for (int p = 0; p < nodeValues[nodeValues.Length - 2].Length; p++)
                 {
-                    layerWeightGradients[i, p] = stackedDerivs[i] * nodeValues[nodeValues.Length - 2][p];
+                    layerWeightGradients[n, p] = stackedDerivs[n] * nodeValues[nodeValues.Length - 2][p];
                 }
             }
 
