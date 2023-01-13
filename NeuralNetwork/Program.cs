@@ -16,7 +16,13 @@ namespace NeuralNetwork
             var inputs = new float[networkSize[0]];
             for (int i = 0; i < networkSize[0]; i++)
             {
-                inputs[i] = randomizer.NextSingle() - 0.5f;
+                float r = 32 * MathF.Pow(randomizer.NextSingle() + 0.15f,15);
+                if (r < 0)
+                {
+                    r = 0;
+                }
+                // inputs[i] = randomizer.NextSingle() - 0.5f;
+                inputs[i] = r;
             }
 
             var time = DateTime.Now;
