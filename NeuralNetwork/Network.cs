@@ -57,7 +57,16 @@ namespace NeuralNetwork
 
         public void TrainNetwork()
         {
-            
+            int batchSize = 100;
+            int epochs = 2;
+            NetworkGradient gradientSum;
+            for (int e = 0; e < epochs; e++)
+            {
+                for (int i = 0; i < batchSize; i++)
+                {
+
+                }
+            }
         }
 
         public NetworkGradient BackpropagateNetwork(float[] inputValues, float[] desiredOutputValues)
@@ -99,7 +108,7 @@ namespace NeuralNetwork
                     // take sum of partial derivs to corresponding weights
                     // also this partial deriv = bias gradient, so it gets stored
                     for (int f = 0; f < nodeValues[l + 1].Length; f++) {
-                        newDerivs[n] = newDerivs[n] + stackedDerivs[f] * Layers[l - 1].Nodes[f].Weights[n];
+                        newDerivs[n] = newDerivs[n] + stackedDerivs[f] * Layers[l].Nodes[f].Weights[n];
                     }
                     newDerivs[n] *= CalculateSigmoidDerivative(nodeValues[l][n]);
                     layerBiasGradients[n] = newDerivs[n];
@@ -151,6 +160,32 @@ namespace NeuralNetwork
             }
         }
 
+        private static NetworkGradient SumNetworkGradients(NetworkGradient[] networkGradients)
+        {
+            int layers = networkGradients[0].LayerGradients.Length;
+            LayerGradient[] layerGradientsSum = new LayerGradient[layers];
+            
+            for (int l = 0; l < layers; l++) 
+            {
+                int layerSize = networkGradients[0].LayerGradients[l].BiasGradients.Length;
+                int prevLayerSize = networkGradients[0].LayerGradients[l].WeightGradients.GetUpperBound(2);
+                float[] biasGradientSum = new float[layerSize];
+                float[,] weightGradientSum = new float[layerSize, prevLayerSize];
+                for (int g = 0; g < networkGradients.Length; g++) 
+                {
+                    for (int b = 0; b < layerSize; b++) {
+                        biasGradientSum[b] += networkGradients[g].LayerGradients[l].BiasGradients[b];
+                        for (int w = 0; w < prevLayerSize; w++)
+                        {
+                            weightGradientSum[b, w] += networkGradients[g].LayerGradients[l].WeightGradients[b, w];
+                        }
+                    }
+                }
+                layerGradientsSum[l] = new LayerGradient(biasGradientSum, weightGradientSum);
+            }
+            NetworkGradient networkGradientSum = new NetworkGradient(layerGradientsSum);
+            return networkGradientSum;
+        }
         private static float CalculateSigmoidDerivative(float x)
         {
             float eToX = MathF.Exp(x);
@@ -167,11 +202,11 @@ namespace NeuralNetwork
 
             for (int i = 0; i < nodeInputSize; i++)
             {
-                randWeights[i] = randomizer.NextSingle() - 0.5f;
+                randWeights[i] = (randomizer.NextSingle() - 0.5f) * 0.2f;
                 //randBiases[i] = randomizer.NextSingle() - 0.5f;
             }
 
-            var randBias = randomizer.NextSingle();
+            var randBias = randomizer.NextSingle() * 0.2f;
             node.SetWeights(randWeights);
             node.Bias = randBias;
         }
