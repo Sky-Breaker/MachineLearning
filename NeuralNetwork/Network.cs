@@ -59,14 +59,26 @@ namespace NeuralNetwork
         {
             int batchSize = 100;
             int epochs = 2;
-            NetworkGradient gradientSum;
             for (int e = 0; e < epochs; e++)
             {
-                for (int i = 0; i < batchSize; i++)
+                NetworkGradient gradientSum = BackpropagateNetwork();
+                for (int i = 1; i < batchSize; i++)
                 {
+                    NetworkGradient result = BackpropagateNetwork();
 
+                    NetworkGradient[] gradientsToCombine = new NetworkGradient[2];
+                    gradientsToCombine[0] = gradientSum;
+                    gradientsToCombine[1] = result;
+
+                    gradientSum = SumNetworkGradients(gradientsToCombine);
                 }
+                AdjustNetworkValues(gradientSum);
             }
+        }
+
+        private void AdjustNetworkValues(NetworkGradient gradient)
+        {
+
         }
 
         public NetworkGradient BackpropagateNetwork(float[] inputValues, float[] desiredOutputValues)
