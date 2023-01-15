@@ -9,8 +9,8 @@ namespace NeuralNetwork
 {
     public class TrainingDataReader
     {
-        public byte[,] TrainingImages;
-        public byte[,] TrainingLabels;
+        public ListOfData TrainingImages;
+        public ListOfData TrainingLabels;
 
         public int ImageSize;
 
@@ -24,7 +24,7 @@ namespace NeuralNetwork
             TrainingLabels = PrepareLabelData(trainingLabelsBytes);
         }
 
-        private byte[,] PrepareImageData(byte[] trainingImagesBytes)
+        private ListOfData PrepareImageData(byte[] trainingImagesBytes)
         {
             byte[,] trainingImageData = new byte[60000, ImageSize * ImageSize];
             for (int i = 16; i < trainingImagesBytes.Length; i++)
@@ -34,10 +34,10 @@ namespace NeuralNetwork
                 //int pixelY = ((i - 16) / ImageSize + 1) % ImageSize;
                 trainingImageData[currentImage, pixelX] = trainingImagesBytes[i];
             }
-            return trainingImageData;
+            return new ListOfData(trainingImageData);
         }
 
-        private byte[,] PrepareLabelData(byte[] trainingLabelsBytes)
+        private ListOfData PrepareLabelData(byte[] trainingLabelsBytes)
         {
             byte[,] trainingLabelData = new byte[60000,10];
             for (int i = 8; i < trainingLabelsBytes.Length; i++)
@@ -56,7 +56,7 @@ namespace NeuralNetwork
                     trainingLabelData[i - 8, labelNumber] = label[labelNumber];
                 }
             }
-            return trainingLabelData;
+            return new ListOfData(trainingLabelData);
         }
 
     }
