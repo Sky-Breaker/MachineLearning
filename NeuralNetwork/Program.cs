@@ -7,6 +7,7 @@ namespace NeuralNetwork
         static void Main(string[] args)
         {
             // Console.WriteLine("Hello. My name is JARVIS.");
+            /*
             var randomizer = new Random();
 
             var networkSize = new int[4] { 784, 20, 16, 10 };
@@ -33,19 +34,6 @@ namespace NeuralNetwork
             var inputString = "Inputs: ";
             var outputString = "Outputs: ";
 
-            /*
-            for (int i = 0; i < networkSize[0]; i++)
-            {
-                inputString += inputs[i] + ", ";
-            }
-            */
-
-            /*
-            for (int i = 0; i < outputs.Length; i++)
-            {
-                outputString += outputs[i] + ", ";
-            }
-            */
 
             for (int i = 0; i < outputs.Length; i++)
             {
@@ -60,18 +48,28 @@ namespace NeuralNetwork
             Console.Out.WriteLine(inputString);
             Console.Out.WriteLine(outputString);
             Console.Out.WriteLine("Elapsed Time: " + timeSpan.TotalMilliseconds + "ms");
-
+            */
 
             String trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
             String trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath);
+
+            var networkSize = new int[4] { 784, 20, 16, 10 };
+
+            var network = new Network(networkSize);
+
+            network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 100, 0.001f);
+
+
+
+            /*
             String testOutput = "";
             float[] backpropTestImage = new float[28 * 28];
             for (int i = 0; i < 28; i++)
             {
                 for (int j = 0; j < 28; j++) {
-                    Boolean PixelIsOn = trainingData.TrainingImages[18, i * 28 + j] > 0;
+                    Boolean PixelIsOn = trainingData.TrainingImages.GetValuesAtIndex[18, i * 28 + j] > 0;
                     if (PixelIsOn)
                     {
                         testOutput += "*";
@@ -86,10 +84,12 @@ namespace NeuralNetwork
             }
 
             Console.Write(testOutput);
+            
 
             float[] expectedValues = { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
             Network.NetworkGradient testg = testNetwork.BackpropagateNetwork(backpropTestImage, expectedValues);
-            /*
+
+
             var randomizer = new Random();
             var inputSize = 6;
 
