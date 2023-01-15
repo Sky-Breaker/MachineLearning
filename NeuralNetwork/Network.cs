@@ -117,6 +117,8 @@ namespace NeuralNetwork
             float[] layerBiasGradients = new float[layerLength];
             float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
 
+            string errorAmounts = "Error: ";
+
             for (int node = 0; node < layerLength; node++)
             {
                 outputError[node] = nodeValues[nodeValues.Length - 1][node] - desiredOutputValues[node];
@@ -126,7 +128,9 @@ namespace NeuralNetwork
                 {
                     layerWeightGradients[node, prevNode] = stackedDerivs[node] * nodeValues[nodeValues.Length - 2][prevNode];
                 }
+                errorAmounts += Math.Pow(outputError[node], 2) + ", ";
             }
+            Console.Out.WriteLine(errorAmounts);
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
 
