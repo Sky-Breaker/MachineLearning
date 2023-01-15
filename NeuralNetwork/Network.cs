@@ -55,16 +55,18 @@ namespace NeuralNetwork
             return Layers[0].GetAllLayerValues(new float[][] { inputValues });
         }
 
-        public void TrainNetwork()
+        public void TrainNetwork(ListOfData trainingImages, ListOfData trainingLabels, int batchSize, float learningRate)
         {
-            int batchSize = 100;
-            int epochs = 2;
-            for (int e = 0; e < epochs; e++)
+            for (int batch = 0; (batch + 1) * batchSize < trainingImages.GetSize(); batch++)
             {
-                NetworkGradient gradientSum = BackpropagateNetwork();
+                int index = batch * batchSize;
+
+                NetworkGradient gradientSum = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
                 for (int i = 1; i < batchSize; i++)
                 {
-                    NetworkGradient result = BackpropagateNetwork();
+                    index++;
+
+                    NetworkGradient result = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
 
                     NetworkGradient[] gradientsToCombine = new NetworkGradient[2];
                     gradientsToCombine[0] = gradientSum;
@@ -72,18 +74,37 @@ namespace NeuralNetwork
 
                     gradientSum = SumNetworkGradients(gradientsToCombine);
                 }
-                AdjustNetworkValues(gradientSum);
+                AdjustNetworkValues(gradientSum, learningRate);
             }
         }
 
-        private void AdjustNetworkValues(NetworkGradient gradient)
+        private void AdjustNetworkValues(NetworkGradient gradient, float learningRate)
         {
+            for (int layer = 0; layer < Layers.Length; layer++)
+            {
+                for (int node = 0; node < Layers[layer].Nodes.Length; node++)
+                {
+                    float biasAdjustmentValue = gradient.LayerGradients[layer].BiasGradients[node] * -1 * learningRate;
+                    Layers[layer].Nodes[node].Bias += biasAdjustmentValue;
 
+                    for (int weight = 0; weight < Layers[layer].Nodes[0].Weights.Length; weight++)
+                    {
+                        float weightAdjustmentValue = gradient.LayerGradients[layer].WeightGradients[node, weight] * -1 * learningRate;
+                        Layers[layer].Nodes[node].Weights[weight] += weightAdjustmentValue;
+                    }
+                }
+            }
         }
 
-        public NetworkGradient BackpropagateNetwork(float[] inputValues, float[] desiredOutputValues)
+        public NetworkGradient BackpropagateNetwork(byte[] inputValues, byte[] desiredOutputValues)
         {
-            float[][] nodeValues = GetAllNetworkValues(inputValues);
+            float[] inputs = new float[inputValues.Length];
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                inputs[i] = inputValues[i];
+            }
+
+            float[][] nodeValues = GetAllNetworkValues(inputs);
             
             int layerLength = nodeValues[nodeValues.Length - 1].Length;
             NetworkGradient resultNetworkGradient;
@@ -96,41 +117,41 @@ namespace NeuralNetwork
             float[] layerBiasGradients = new float[layerLength];
             float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
 
-            for (int n = 0; n < layerLength; n++)
+            for (int node = 0; node < layerLength; node++)
             {
-                outputError[n] = nodeValues[nodeValues.Length - 1][n] - desiredOutputValues[n];
-                stackedDerivs[n] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][n]) * 2 * outputError[n];
-                layerBiasGradients[n] = stackedDerivs[n];
-                for (int p = 0; p < nodeValues[nodeValues.Length - 2].Length; p++)
+                outputError[node] = nodeValues[nodeValues.Length - 1][node] - desiredOutputValues[node];
+                stackedDerivs[node] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][node]) * 2 * outputError[node];
+                layerBiasGradients[node] = stackedDerivs[node];
+                for (int prevNode = 0; prevNode < nodeValues[nodeValues.Length - 2].Length; prevNode++)
                 {
-                    layerWeightGradients[n, p] = stackedDerivs[n] * nodeValues[nodeValues.Length - 2][p];
+                    layerWeightGradients[node, prevNode] = stackedDerivs[node] * nodeValues[nodeValues.Length - 2][prevNode];
                 }
             }
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
 
-            for (int l = nodeValues.Length - 2; l > 0; l--)
+            for (int layer = nodeValues.Length - 2; layer > 0; layer--)
             {
-                layerBiasGradients = new float[nodeValues[l].Length];
-                layerWeightGradients = new float[nodeValues[l].Length, nodeValues[l - 1].Length];
-                float[] newDerivs = new float[nodeValues[l].Length];
-                for (int n = 0; n < nodeValues[l].Length; n++)
+                layerBiasGradients = new float[nodeValues[layer].Length];
+                layerWeightGradients = new float[nodeValues[layer].Length, nodeValues[layer - 1].Length];
+                float[] newDerivs = new float[nodeValues[layer].Length];
+                for (int node = 0; node < nodeValues[layer].Length; node++)
                 {
                     // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
                     // take sum of partial derivs to corresponding weights
                     // also this partial deriv = bias gradient, so it gets stored
-                    for (int f = 0; f < nodeValues[l + 1].Length; f++) {
-                        newDerivs[n] = newDerivs[n] + stackedDerivs[f] * Layers[l].Nodes[f].Weights[n];
+                    for (int nextNode = 0; nextNode < nodeValues[layer + 1].Length; nextNode++) {
+                        newDerivs[node] = newDerivs[node] + stackedDerivs[nextNode] * Layers[layer].Nodes[nextNode].Weights[node];
                     }
-                    newDerivs[n] *= CalculateSigmoidDerivative(nodeValues[l][n]);
-                    layerBiasGradients[n] = newDerivs[n];
-                    for (int p = 0; p < nodeValues[l - 1].Length; p++)
+                    newDerivs[node] *= CalculateSigmoidDerivative(nodeValues[layer][node]);
+                    layerBiasGradients[node] = newDerivs[node];
+                    for (int prevNode = 0; prevNode < nodeValues[layer - 1].Length; prevNode++)
                     {
-                        layerWeightGradients[n, p] = newDerivs[n] * nodeValues[l - 1][p];
+                        layerWeightGradients[node, prevNode] = newDerivs[node] * nodeValues[layer - 1][prevNode];
                     }
                 }
                 stackedDerivs = newDerivs;
-                resultLayerGradients[l - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
+                resultLayerGradients[layer - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
             }
 
             resultNetworkGradient = new NetworkGradient(resultLayerGradients);
@@ -181,8 +202,10 @@ namespace NeuralNetwork
             {
                 int layerSize = networkGradients[0].LayerGradients[l].BiasGradients.Length;
                 int prevLayerSize = networkGradients[0].LayerGradients[l].WeightGradients.GetUpperBound(2);
+
                 float[] biasGradientSum = new float[layerSize];
                 float[,] weightGradientSum = new float[layerSize, prevLayerSize];
+
                 for (int g = 0; g < networkGradients.Length; g++) 
                 {
                     for (int b = 0; b < layerSize; b++) {
@@ -198,6 +221,7 @@ namespace NeuralNetwork
             NetworkGradient networkGradientSum = new NetworkGradient(layerGradientsSum);
             return networkGradientSum;
         }
+
         private static float CalculateSigmoidDerivative(float x)
         {
             float eToX = MathF.Exp(x);
