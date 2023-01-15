@@ -9,10 +9,12 @@ namespace NeuralNetwork
     public class ListOfData
     {
         private byte[,] Data;
+        private int Size;
 
         public ListOfData(byte[,] data)
         {
             Data = data;
+            Size = data.GetLength(1);
         }
 
         public byte[] GetValuesAtIndex(int index)
@@ -23,6 +25,11 @@ namespace NeuralNetwork
                 values[i] = Data[1, i];
             }
             return values;
+        }
+
+        public int GetSize()
+        {
+            return Size;
         }
     }
 }
