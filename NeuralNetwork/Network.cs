@@ -205,7 +205,7 @@ namespace NeuralNetwork
             for (int l = 0; l < layers; l++) 
             {
                 int layerSize = networkGradients[0].LayerGradients[l].BiasGradients.Length;
-                int prevLayerSize = networkGradients[0].LayerGradients[l].WeightGradients.GetUpperBound(2);
+                int prevLayerSize = networkGradients[0].LayerGradients[l].WeightGradients.GetUpperBound(1);
 
                 float[] biasGradientSum = new float[layerSize];
                 float[,] weightGradientSum = new float[layerSize, prevLayerSize];

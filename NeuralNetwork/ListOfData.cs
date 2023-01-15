@@ -14,12 +14,12 @@ namespace NeuralNetwork
         public ListOfData(byte[,] data)
         {
             Data = data;
-            Size = data.GetLength(1);
+            Size = data.GetLength(0);
         }
 
         public byte[] GetValuesAtIndex(int index)
         {
-            byte[] values = new byte[Data.GetLength(2)];
+            byte[] values = new byte[Data.GetLength(1)];
             for (int i = 0; i < values.Length; i++)
             {
                 values[i] = Data[1, i];
