@@ -57,13 +57,13 @@ namespace NeuralNetwork
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
-            var networkSize = new int[4] { 784, 20, 16, 10 };
+            var networkSize = new int[4] { 784, 100, 40, 10 };
 
             var network = new Network(networkSize);
 
-            network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 100, 0.001f);
+            network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
 
-            int testImageNumber = 46;
+            int testImageNumber = 27;
             float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
 
             string outputText = "Network output: ";

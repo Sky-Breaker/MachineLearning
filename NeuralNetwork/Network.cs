@@ -246,11 +246,11 @@ namespace NeuralNetwork
 
             for (int i = 0; i < nodeInputSize; i++)
             {
-                randWeights[i] = (randomizer.NextSingle() - 0.5f) * 0.2f;
+                randWeights[i] = (randomizer.NextSingle() - 0.5f) * 1f;
                 //randBiases[i] = randomizer.NextSingle() - 0.5f;
             }
 
-            var randBias = randomizer.NextSingle() * 0.2f;
+            var randBias = randomizer.NextSingle() * 1f;
             node.SetWeights(randWeights);
             node.Bias = randBias;
         }
