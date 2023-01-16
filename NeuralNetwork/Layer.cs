@@ -13,14 +13,14 @@ namespace NeuralNetwork
     /// </summary>
     public class Layer
     {
-        public Node[] Nodes
+        public Neuron[] Nodes
         {
             get;
         }
 
         private Layer NextLayer;
 
-        public Layer(Node[] nodeList, Layer nextLayer) {
+        public Layer(Neuron[] nodeList, Layer nextLayer) {
             Nodes = nodeList;
             NextLayer = nextLayer;
         }

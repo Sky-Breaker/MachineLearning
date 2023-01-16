@@ -10,13 +10,13 @@ namespace NeuralNetwork
     /// Individual part of the neural network that contains a value. This value is calculated either from a sum of stored weights and a bias
     /// applied to each node in the previous layer or the inputs for nodes in the input layer.
     /// </summary>
-    public class Node
+    public class Neuron
     {
         public float[] Weights;
 
         public float Bias;
 
-        public Node(int nOfInputs)
+        public Neuron(int nOfInputs)
         {
             Weights = new float[nOfInputs];
             Bias = 0;

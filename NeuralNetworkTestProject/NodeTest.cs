@@ -16,7 +16,7 @@ namespace NeuralNetworkTestProject
             int sizeShouldBeTwo = 2;
 
             // Act
-            var n = new Node(sizeShouldBeTwo);
+            var n = new Neuron(sizeShouldBeTwo);
 
             // Assert
             int expected = sizeShouldBeTwo;
@@ -29,7 +29,7 @@ namespace NeuralNetworkTestProject
         public void CalculateValueShouldThrowIfNoFloatInputs()
         {
             // Arrange
-            var n = new Node(1);
+            var n = new Neuron(1);
 
             // Act
             // Assert
