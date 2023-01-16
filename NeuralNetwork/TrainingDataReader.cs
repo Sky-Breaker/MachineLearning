@@ -25,15 +25,15 @@ namespace NeuralNetwork
 
             ImageSize = 28;
 
-            TrainingImages = PrepareImageData(trainingImagesBytes);
-            TrainingLabels = PrepareLabelData(trainingLabelsBytes);
-            TestImages = PrepareImageData(testImageBytes);
-            TestLabels = PrepareLabelData(testLabelsBytes);
+            TrainingImages = PrepareImageData(trainingImagesBytes, 60000);
+            TrainingLabels = PrepareLabelData(trainingLabelsBytes, 60000);
+            TestImages = PrepareImageData(testImageBytes, 10000);
+            TestLabels = PrepareLabelData(testLabelsBytes, 10000);
         }
 
-        private ListOfData PrepareImageData(byte[] trainingImagesBytes)
+        private ListOfData PrepareImageData(byte[] trainingImagesBytes, int nOfImages)
         {
-            byte[,] trainingImageData = new byte[60000, ImageSize * ImageSize];
+            byte[,] trainingImageData = new byte[nOfImages, ImageSize * ImageSize];
             for (int i = 16; i < trainingImagesBytes.Length; i++)
             {
                 int currentImage = (i - 16) / (ImageSize * ImageSize);
@@ -44,9 +44,9 @@ namespace NeuralNetwork
             return new ListOfData(trainingImageData);
         }
 
-        private ListOfData PrepareLabelData(byte[] trainingLabelsBytes)
+        private ListOfData PrepareLabelData(byte[] trainingLabelsBytes, int nOfLabels)
         {
-            byte[,] trainingLabelData = new byte[60000,10];
+            byte[,] trainingLabelData = new byte[nOfLabels,10];
             for (int i = 8; i < trainingLabelsBytes.Length; i++)
             {
                 byte[] label = new byte[10];
