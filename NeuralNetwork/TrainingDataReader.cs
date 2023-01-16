@@ -12,16 +12,23 @@ namespace NeuralNetwork
         public ListOfData TrainingImages;
         public ListOfData TrainingLabels;
 
+        public ListOfData TestImages;
+        public ListOfData TestLabels;
+
         public int ImageSize;
 
-        public TrainingDataReader(string trainingImagesFilePath, string trainingLabelsFilePath) {
+        public TrainingDataReader(string trainingImagesFilePath, string trainingLabelsFilePath, string testImagesFilePath, string testLabelsFilePath) {
             byte[] trainingImagesBytes = File.ReadAllBytes(trainingImagesFilePath);
             byte[] trainingLabelsBytes = File.ReadAllBytes(trainingLabelsFilePath);
+            byte[] testImageBytes = File.ReadAllBytes(testImagesFilePath);
+            byte[] testLabelsBytes = File.ReadAllBytes(testLabelsFilePath);
 
             ImageSize = 28;
 
             TrainingImages = PrepareImageData(trainingImagesBytes);
             TrainingLabels = PrepareLabelData(trainingLabelsBytes);
+            TestImages = PrepareImageData(testImageBytes);
+            TestLabels = PrepareLabelData(testLabelsBytes);
         }
 
         private ListOfData PrepareImageData(byte[] trainingImagesBytes)
