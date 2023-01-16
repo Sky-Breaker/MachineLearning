@@ -52,8 +52,8 @@ namespace NeuralNetwork
 
             String trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
             String trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
-            String testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\test-images.idx3-ubyte";
-            String testLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\test-labels.idx1-ubyte";
+            String testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-images.idx3-ubyte";
+            String testLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-labels.idx1-ubyte";
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
@@ -63,7 +63,23 @@ namespace NeuralNetwork
 
             network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 100, 0.001f);
 
+            int testImageNumber = 46;
+            float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
 
+            string outputText = "Network output: ";
+            for (int i = 0; i < networkOutput.Length; i++)
+            {
+                outputText += i + "-" + networkOutput[i] + ", ";
+            }
+
+            string correctOutputText = "Expected output: ";
+            for (int i = 0; i < networkOutput.Length; i++)
+            {
+                correctOutputText += i + "-" + trainingData.TestLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
+            }
+
+            Console.WriteLine(outputText);
+            Console.WriteLine(correctOutputText);
 
             /*
             String testOutput = "";
