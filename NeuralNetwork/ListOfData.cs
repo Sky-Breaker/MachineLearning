@@ -22,7 +22,7 @@ namespace NeuralNetwork
             byte[] values = new byte[Data.GetLength(1)];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = Data[1, i];
+                values[i] = Data[index, i];
             }
             return values;
         }
