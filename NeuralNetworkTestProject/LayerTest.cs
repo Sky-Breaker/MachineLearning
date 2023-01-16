@@ -65,7 +65,7 @@ namespace NeuralNetworkTestProject
         }
         */
 
-        private class TestNode : Neuron
+        private class TestNode : Node
         {
             private float testReturnValue;
             public TestNode(float value, int nOfInputs) : base(nOfInputs)
