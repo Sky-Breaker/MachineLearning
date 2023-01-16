@@ -45,14 +45,24 @@ namespace NeuralNetwork
             }
         }
 
-        public float[] GetNetworkOutput(float[] inputValues)
+        public float[] GetNetworkOutput(byte[] inputValues)
         {
-            return Layers[0].GetOutputLayerValues(inputValues);
+            float[] inputs = new float[inputValues.Length];
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                inputs[i] = inputValues[i];
+            }
+            return Layers[0].GetOutputLayerValues(inputs);
         }
 
-        public float[][] GetAllNetworkValues(float[] inputValues)
+        public float[][] GetAllNetworkValues(byte[] inputValues)
         {
-            return Layers[0].GetAllLayerValues(new float[][] { inputValues });
+            float[] inputs = new float[inputValues.Length];
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                inputs[i] = inputValues[i];
+            }
+            return Layers[0].GetAllLayerValues(new float[][] { inputs });
         }
 
         public void TrainNetwork(ListOfData trainingImages, ListOfData trainingLabels, int batchSize, float learningRate)
@@ -98,13 +108,7 @@ namespace NeuralNetwork
 
         public NetworkGradient BackpropagateNetwork(byte[] inputValues, byte[] desiredOutputValues)
         {
-            float[] inputs = new float[inputValues.Length];
-            for (int i = 0; i < inputs.Length; i++)
-            {
-                inputs[i] = inputValues[i];
-            }
-
-            float[][] nodeValues = GetAllNetworkValues(inputs);
+            float[][] nodeValues = GetAllNetworkValues(inputValues);
             
             int layerLength = nodeValues[nodeValues.Length - 1].Length;
             NetworkGradient resultNetworkGradient;
