@@ -27,6 +27,14 @@ namespace NeuralNetwork
             return values;
         }
 
+        public void SetValuesAtIndex(int index, byte[] values)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                Data[index, i] = values[i];
+            }
+        }
+
         public int GetSize()
         {
             return Size;
