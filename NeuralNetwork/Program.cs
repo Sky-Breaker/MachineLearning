@@ -19,13 +19,47 @@ namespace NeuralNetwork
 
             var network = new Network(networkSize);
 
-            int epochs = 6;
+            int epochs = 4;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.01f*MathF.Pow(0.6f,epoch));
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 300, 0.005f*MathF.Pow(0.6f,epoch));
                 trainingData.ShuffleTrainingData();
             }
 
+            float correctlyLabeled = 0;
+            for (int t = 0; t < trainingData.TestImages.GetSize(); t++)
+            {
+                float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(t));
+                float maxOutput = -1;
+                int indexOfMaxOutput = 0;
+                for (int index = 0; index < networkOutput.Length; index++)
+                {
+                    if (maxOutput < networkOutput[index])
+                    {
+                        maxOutput = networkOutput[index];
+                        indexOfMaxOutput = index;
+                    }
+                }
+                int indexOfTestLabel = 0;
+                for (int index = 0; index < 10; index++)
+                {
+                    if (trainingData.TestLabels.GetValuesAtIndex(t)[index] == 1)
+                    {
+                        indexOfTestLabel = index;
+                    }
+                }
+                //Console.Out.WriteLine("Classified as: " + indexOfMaxOutput + " Actual: " + indexOfTestLabel);
+                if (indexOfTestLabel == indexOfMaxOutput)
+                {
+                    correctlyLabeled += 1;
+                }
+            }
+
+            Console.Out.WriteLine("Percent correct: " + (correctlyLabeled / trainingData.TestImages.GetSize()) * 100);
+
+
+
+            /*
             while (true)
             {
                 Console.Out.WriteLine("Enter a test image number:");
@@ -56,6 +90,9 @@ namespace NeuralNetwork
                 Console.WriteLine(outputText);
                 Console.WriteLine(correctOutputText);
             }
+            */
+
+
             /*
             var randomizer = new Random();
 
