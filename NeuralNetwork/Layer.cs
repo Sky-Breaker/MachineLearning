@@ -45,18 +45,13 @@ namespace NeuralNetwork
         /// <summary>
         /// Calculates the values of the nodes in every layer and gives back the output when called from the first layer.
         /// </summary>
-        /// <param name="inputs">External input values for the entire network.</param>
-        /// <returns>The output values of the network.</returns>
-        /// <remarks>Each node needs inputs from the last layer (or the external inputs for nodes in the input layer) when calculating
-        /// it's value. Also, this recursive method needs to call itself on the next layer. Each layer contains a reference to the next
-        /// layer so it can make the next layer calculate its value, and then the output layer which has a null reference can end the
-        /// recursion and send the output values back to the caller. The parameter of inputs--which comes from the previous layer--is
-        /// given to the nodes in the layer, and then the values of the nodes in the layer is passed on in the recursive call.</remarks>
+        /// <param name="inputs">Input values to be given to the nodes in the layer. Initial recursive call should pass
+        /// the external input values for the entire network.</param>
+        /// <returns>The output values of the network after recursively forward propagating through it.</returns>
         public float[] GetOutputLayerValues(float[] inputs)
         {
             if (NextLayer == null)
             {
-                // Console.WriteLine("Recursion ended.");
                 return CalculateLayer(inputs);
             }
             else
@@ -65,10 +60,19 @@ namespace NeuralNetwork
             }
         }
 
+        /// <summary>
+        /// Calculates the values of the nodes in every layer and gives back every node value when called from the first layer.
+        /// </summary>
+        /// <param name="inputs">Input values to be given to the nodes in the layer, along with previous layers' values. Initial 
+        /// recursive call should pass the external input values for the entire network in a 2d jagged float array of size
+        /// [1][*number of inputs to the network*].</param>
+        /// <returns>The values of every node in the network after recursively forward propagating through it.</returns>
         public float[][] GetAllLayerValues(float[][] inputs)
         {
+            // The values to calculate this layer on should be the values of the last layer.
             float[] lastLayerValues = inputs[inputs.Length - 1];
 
+            // A jagged 2d array to store the values of the nodes in this layer, and the ones in previous layers.
             float[][] groupedLayers = new float[inputs.Length + 1][];
 
             for (int i = 0; i < inputs.Length; i++)
