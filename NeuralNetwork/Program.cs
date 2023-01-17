@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace NeuralNetwork
 {
@@ -63,23 +64,36 @@ namespace NeuralNetwork
 
             network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
 
-            int testImageNumber = 27;
-            float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
-
-            string outputText = "Network output: ";
-            for (int i = 0; i < networkOutput.Length; i++)
+            while (true)
             {
-                outputText += i + "-" + networkOutput[i] + ", ";
-            }
+                Console.Out.WriteLine("Enter a test image number:");
+                string testImageInput = Console.In.ReadLine();
+                int testImageNumber = 0;
+                try 
+                {
+                    int.TryParse(testImageInput,out testImageNumber);
+                }
+                catch
+                {
+                    Console.Out.WriteLine("Incorrect format for test image number provided.");
+                }
+                float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
 
-            string correctOutputText = "Expected output: ";
-            for (int i = 0; i < networkOutput.Length; i++)
-            {
-                correctOutputText += i + "-" + trainingData.TestLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
-            }
+                string outputText = "Network output: ";
+                for (int i = 0; i < networkOutput.Length; i++)
+                {
+                    outputText += i + "-" + networkOutput[i] + ", ";
+                }
 
-            Console.WriteLine(outputText);
-            Console.WriteLine(correctOutputText);
+                string correctOutputText = "Expected output: ";
+                for (int i = 0; i < networkOutput.Length; i++)
+                {
+                    correctOutputText += i + "-" + trainingData.TestLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
+                }
+
+                Console.WriteLine(outputText);
+                Console.WriteLine(correctOutputText);
+            }
 
             /*
             String testOutput = "";
