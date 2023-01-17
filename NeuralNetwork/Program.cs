@@ -22,7 +22,7 @@ namespace NeuralNetwork
             int epochs = 6;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.01f*MathF.Pow(0.6f,epoch));
                 trainingData.ShuffleTrainingData();
             }
 
