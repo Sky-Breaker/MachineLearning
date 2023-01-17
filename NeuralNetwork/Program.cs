@@ -15,14 +15,14 @@ namespace NeuralNetwork
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
-            var networkSize = new int[4] { 784, 100, 40, 10 };
+            var networkSize = new int[4] { 784, 200, 100, 10 };
 
             var network = new Network(networkSize);
 
             int epochs = 4;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 300, 0.005f*MathF.Pow(0.6f,epoch));
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.005f);//*MathF.Pow(0.4f,epoch)
                 trainingData.ShuffleTrainingData();
             }
 
