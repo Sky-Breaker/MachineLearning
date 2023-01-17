@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NeuralNetwork
+﻿namespace NeuralNetwork
 {
     /// <summary>
     /// Individual part of the neural network that contains a value. This value is calculated either from a sum of stored weights and a bias
@@ -43,7 +37,7 @@ namespace NeuralNetwork
                 total += Weights[i] * inputs[i];
             }
 
-            //Logistic sigmoid function, equal to 1 / (1 + e^-x)
+            // Apply the logistic sigmoid function to total input, where sig(x) = 1 / (1 + e^-x)
             return 1 / (1 + MathF.Exp(-total));
         }
 
@@ -61,16 +55,5 @@ namespace NeuralNetwork
 
             Weights = newWeights;
         }
-
-        /*
-        /// <summary>
-        /// Sets the biases of the node to the new ones given.
-        /// </summary>
-        /// <param name="newBias">Array containing the new biases to be assigned to this node. Size must match the original size of biases.</param>
-        public void SetBias(float newBias)
-        {
-            Bias = newBias;
-        }
-        */
     }
 }
