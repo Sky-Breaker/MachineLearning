@@ -65,19 +65,26 @@
             {
                 int index = batch * batchSize;
 
-                NetworkGradient gradientSum = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                BackpropagationResult backpropagationResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                NetworkGradient gradientSum = backpropagationResult.Gradient;
+                float errorSum = backpropagationResult.Error;
+                //Console.WriteLine("Error: " + backpropagationResult.Error);
                 for (int i = 1; i < batchSize; i++)
                 {
                     index++;
-
-                    NetworkGradient result = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                    
+                    backpropagationResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                    NetworkGradient newGradient = backpropagationResult.Gradient;
+                    errorSum += backpropagationResult.Error;
+                    //Console.WriteLine("Error: " + backpropagationResult.Error);
 
                     NetworkGradient[] gradientsToCombine = new NetworkGradient[2];
                     gradientsToCombine[0] = gradientSum;
-                    gradientsToCombine[1] = result;
+                    gradientsToCombine[1] = newGradient;
 
                     gradientSum = SumNetworkGradients(gradientsToCombine);
                 }
+                Console.Out.WriteLine("Error: " + errorSum / batchSize);
                 AdjustNetworkValues(gradientSum, learningRate);
             }
         }
@@ -100,7 +107,7 @@
             }
         }
 
-        public NetworkGradient BackpropagateNetwork(byte[] inputValues, byte[] desiredOutputValues)
+        public BackpropagationResult BackpropagateNetwork(byte[] inputValues, byte[] desiredOutputValues)
         {
             float[][] nodeValues = GetAllNetworkValues(inputValues);
             
@@ -115,8 +122,7 @@
             float[] layerBiasGradients = new float[layerLength];
             float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
 
-            string errorAmounts = "Error: ";
-
+            float errorAmount = 0;
             for (int node = 0; node < layerLength; node++)
             {
                 outputError[node] = nodeValues[nodeValues.Length - 1][node] - desiredOutputValues[node];
@@ -126,9 +132,8 @@
                 {
                     layerWeightGradients[node, prevNode] = stackedDerivs[node] * nodeValues[nodeValues.Length - 2][prevNode];
                 }
-                errorAmounts += Math.Pow(outputError[node], 2) + ", ";
+                errorAmount += MathF.Pow(outputError[node], 2);
             }
-            Console.Out.WriteLine(errorAmounts);
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
 
@@ -157,7 +162,8 @@
             }
 
             resultNetworkGradient = new NetworkGradient(resultLayerGradients);
-            return resultNetworkGradient;
+            BackpropagationResult result = new BackpropagationResult(resultNetworkGradient, errorAmount);
+            return result;
         }
 
         private static NetworkGradient SumNetworkGradients(NetworkGradient[] networkGradients)
