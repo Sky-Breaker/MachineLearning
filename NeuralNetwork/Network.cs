@@ -41,6 +41,7 @@
 
         public float[] GetNetworkOutput(byte[] inputValues)
         {
+            // Convert byte array of inputs to floats for the recursive layer method
             float[] inputs = new float[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
@@ -51,6 +52,7 @@
 
         public float[][] GetAllNetworkValues(byte[] inputValues)
         {
+            // Convert byte array of inputs to floats for the recursive layer method
             float[] inputs = new float[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
@@ -59,24 +61,32 @@
             return Layers[0].GetAllLayerValues(new float[][] { inputs });
         }
 
+        /// <summary>
+        /// Trains the network on the given training data and labels.
+        /// </summary>
+        /// <param name="trainingImages">ListOfData containing the training images</param>
+        /// <param name="trainingLabels">ListOfData containing the training labels</param>
+        /// <param name="batchSize">Number of training examples to calculate a gradient for at one time.</param>
+        /// <param name="learningRate">Constant multplied to the calculated gradient to adjust the network weights and biases by.</param>
         public void TrainNetwork(ListOfData trainingImages, ListOfData trainingLabels, int batchSize, float learningRate)
         {
+            // Repeat batches until the end of the batch would exceed the last index of the training data.
             for (int batch = 0; (batch + 1) * batchSize < trainingImages.GetSize(); batch++)
             {
                 int index = batch * batchSize;
-
-                BackpropagationResult backpropagationResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
-                NetworkGradient gradientSum = backpropagationResult.Gradient;
-                float errorSum = backpropagationResult.Error;
-                //Console.WriteLine("Error: " + backpropagationResult.Error);
+                
+                // Do the first backpropagation, and store the gradient and error
+                BackpropagationResult backpropResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                NetworkGradient gradientSum = backpropResult.Gradient;
+                float errorSum = backpropResult.Error;
                 for (int i = 1; i < batchSize; i++)
                 {
                     index++;
                     
-                    backpropagationResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
-                    NetworkGradient newGradient = backpropagationResult.Gradient;
-                    errorSum += backpropagationResult.Error;
-                    //Console.WriteLine("Error: " + backpropagationResult.Error);
+                    // Do another backpropagation, and combine it with the last gradient to keep a sum.
+                    backpropResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                    NetworkGradient newGradient = backpropResult.Gradient;
+                    errorSum += backpropResult.Error;
 
                     NetworkGradient[] gradientsToCombine = new NetworkGradient[2];
                     gradientsToCombine[0] = gradientSum;
@@ -89,12 +99,19 @@
             }
         }
 
+        /// <summary>
+        /// Adjust every weight and bias in the network based on the given gradient and scaled by the learning rate.
+        /// </summary>
+        /// <param name="gradient">NetworkGradient containing calculated slopes of the cost of the network training data classifications with 
+        /// respect to every network weight and bias.</param>
+        /// <param name="learningRate">Constant scalar when multiplied with the negative gradient gives the adjustment for each weight and bias.</param>
         private void AdjustNetworkValues(NetworkGradient gradient, float learningRate)
         {
             for (int layer = 0; layer < Layers.Length; layer++)
             {
                 for (int node = 0; node < Layers[layer].Nodes.Length; node++)
                 {
+                    // Because the gradient is a postive slope of cost to the respective weight or bias, the adjustment should be negative.
                     float biasAdjustmentValue = gradient.LayerGradients[layer].BiasGradients[node] * -1 * learningRate;
                     Layers[layer].Nodes[node].Bias += biasAdjustmentValue;
 
@@ -107,6 +124,12 @@
             }
         }
 
+        /// <summary>
+        /// Conducts backpropagation on the network given input values and the desired correct output values.
+        /// </summary>
+        /// <param name="inputValues">Training input values for the network.</param>
+        /// <param name="desiredOutputValues">Correct desired network output given the inputs to calculate a gradient for.</param>
+        /// <returns>BackpropagationResult containing the gradient of the network output cost with respect to the network weights and biases.</returns>
         public BackpropagationResult BackpropagateNetwork(byte[] inputValues, byte[] desiredOutputValues)
         {
             float[][] nodeValues = GetAllNetworkValues(inputValues);
@@ -122,7 +145,8 @@
             float[] layerBiasGradients = new float[layerLength];
             float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
 
-            float errorAmount = 0;
+            float totalError = 0;
+            // Calculate the last layer partial derivatives
             for (int node = 0; node < layerLength; node++)
             {
                 outputError[node] = nodeValues[nodeValues.Length - 1][node] - desiredOutputValues[node];
@@ -132,11 +156,12 @@
                 {
                     layerWeightGradients[node, prevNode] = stackedDerivs[node] * nodeValues[nodeValues.Length - 2][prevNode];
                 }
-                errorAmount += MathF.Pow(outputError[node], 2);
+                totalError += MathF.Pow(outputError[node], 2);
             }
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
 
+            // Calculate the partial derivatives for each preceding layer
             for (int layer = nodeValues.Length - 2; layer > 0; layer--)
             {
                 layerBiasGradients = new float[nodeValues[layer].Length];
@@ -144,9 +169,8 @@
                 float[] newDerivs = new float[nodeValues[layer].Length];
                 for (int node = 0; node < nodeValues[layer].Length; node++)
                 {
-                    // for every node in prev. layer, multiply ^ by corresponding node in last layer to get weight gradients
-                    // take sum of partial derivs to corresponding weights
-                    // also this partial deriv = bias gradient, so it gets stored
+                    // The partial derivative of the nodes in this layer with respect to the partial derivatives of the next layer is
+                    // influenced by every node in the next layer.
                     for (int nextNode = 0; nextNode < nodeValues[layer + 1].Length; nextNode++) {
                         newDerivs[node] = newDerivs[node] + stackedDerivs[nextNode] * Layers[layer].Nodes[nextNode].Weights[node];
                     }
@@ -162,10 +186,16 @@
             }
 
             resultNetworkGradient = new NetworkGradient(resultLayerGradients);
-            BackpropagationResult result = new BackpropagationResult(resultNetworkGradient, errorAmount);
+            BackpropagationResult result = new BackpropagationResult(resultNetworkGradient, totalError);
             return result;
         }
 
+        /// <summary>
+        /// Returns a NetworkGradient containing the sum of the individual gradients in all of the given network gradients.
+        /// </summary>
+        /// <param name="networkGradients">Array of network gradients to sum.</param>
+        /// <returns>A network gradient whose layer's individual weights and biases are the sum of the respective weight or bias
+        /// in every given network gradient.</returns>
         private static NetworkGradient SumNetworkGradients(NetworkGradient[] networkGradients)
         {
             int layers = networkGradients[0].LayerGradients.Length;
