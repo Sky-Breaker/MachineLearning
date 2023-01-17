@@ -62,7 +62,12 @@ namespace NeuralNetwork
 
             var network = new Network(networkSize);
 
-            network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
+            int epochs = 6;
+            for (int epoch = 0; epoch < epochs; epoch++)
+            {
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
+
+            }
 
             while (true)
             {
