@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NeuralNetwork
+﻿namespace NeuralNetwork
 {
     public class Network
     {
@@ -164,41 +158,6 @@ namespace NeuralNetwork
 
             resultNetworkGradient = new NetworkGradient(resultLayerGradients);
             return resultNetworkGradient;
-        }
-
-        public class NetworkGradient
-        {
-            public LayerGradient[] LayerGradients
-            {
-                get;
-                set;
-            }
-
-            public NetworkGradient(LayerGradient[] layerGradients)
-            {
-                LayerGradients = layerGradients;
-            }
-        }
-
-        public class LayerGradient
-        {
-            public float[] BiasGradients
-            {
-                get; 
-                set;
-            }
-
-            public float[,] WeightGradients
-            {
-                get;
-                set;
-            }
-
-            public LayerGradient(float[] biasGradients, float[,] weightGradients)
-            {
-                BiasGradients = biasGradients;
-                WeightGradients = weightGradients;
-            }
         }
 
         private static NetworkGradient SumNetworkGradients(NetworkGradient[] networkGradients)
