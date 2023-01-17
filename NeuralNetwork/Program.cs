@@ -7,7 +7,55 @@ namespace NeuralNetwork
     {
         static void Main(string[] args)
         {
-            // Console.WriteLine("Hello. My name is JARVIS.");
+            
+            String trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
+            String trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
+            String testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-images.idx3-ubyte";
+            String testLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-labels.idx1-ubyte";
+
+            TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
+
+            var networkSize = new int[4] { 784, 100, 40, 10 };
+
+            var network = new Network(networkSize);
+
+            int epochs = 6;
+            for (int epoch = 0; epoch < epochs; epoch++)
+            {
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
+                trainingData.ShuffleTrainingData();
+            }
+
+            while (true)
+            {
+                Console.Out.WriteLine("Enter a test image number:");
+                string testImageInput = Console.In.ReadLine();
+                int testImageNumber = 0;
+                try 
+                {
+                    int.TryParse(testImageInput,out testImageNumber);
+                }
+                catch
+                {
+                    Console.Out.WriteLine("Incorrect format for test image number provided.");
+                }
+                float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
+
+                string outputText = "Network output: ";
+                for (int i = 0; i < networkOutput.Length; i++)
+                {
+                    outputText += i + "-" + networkOutput[i] + ", ";
+                }
+
+                string correctOutputText = "Expected output: ";
+                for (int i = 0; i < networkOutput.Length; i++)
+                {
+                    correctOutputText += i + "-" + trainingData.TestLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
+                }
+
+                Console.WriteLine(outputText);
+                Console.WriteLine(correctOutputText);
+            }
             /*
             var randomizer = new Random();
 
@@ -49,58 +97,7 @@ namespace NeuralNetwork
             Console.Out.WriteLine(inputString);
             Console.Out.WriteLine(outputString);
             Console.Out.WriteLine("Elapsed Time: " + timeSpan.TotalMilliseconds + "ms");
-            */
 
-            String trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
-            String trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
-            String testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-images.idx3-ubyte";
-            String testLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-labels.idx1-ubyte";
-
-            TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
-
-            var networkSize = new int[4] { 784, 100, 40, 10 };
-
-            var network = new Network(networkSize);
-
-            int epochs = 6;
-            for (int epoch = 0; epoch < epochs; epoch++)
-            {
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 600, 0.01f);
-
-            }
-
-            while (true)
-            {
-                Console.Out.WriteLine("Enter a test image number:");
-                string testImageInput = Console.In.ReadLine();
-                int testImageNumber = 0;
-                try 
-                {
-                    int.TryParse(testImageInput,out testImageNumber);
-                }
-                catch
-                {
-                    Console.Out.WriteLine("Incorrect format for test image number provided.");
-                }
-                float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
-
-                string outputText = "Network output: ";
-                for (int i = 0; i < networkOutput.Length; i++)
-                {
-                    outputText += i + "-" + networkOutput[i] + ", ";
-                }
-
-                string correctOutputText = "Expected output: ";
-                for (int i = 0; i < networkOutput.Length; i++)
-                {
-                    correctOutputText += i + "-" + trainingData.TestLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
-                }
-
-                Console.WriteLine(outputText);
-                Console.WriteLine(correctOutputText);
-            }
-
-            /*
             String testOutput = "";
             float[] backpropTestImage = new float[28 * 28];
             for (int i = 0; i < 28; i++)
