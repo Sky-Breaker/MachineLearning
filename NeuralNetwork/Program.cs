@@ -22,8 +22,11 @@ namespace NeuralNetwork
             int epochs = 4;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.005f);//*MathF.Pow(0.4f,epoch)
+                Console.Out.WriteLine("Epoch: " + epoch);
+                Console.Out.WriteLine("Shuffling...");
                 trainingData.ShuffleTrainingData();
+                Console.Out.WriteLine("Shuffling Done.");
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.005f); // * MathF.Pow(0.8f, epoch)
             }
 
             float correctlyLabeled = 0;
