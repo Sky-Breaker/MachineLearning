@@ -3,9 +3,9 @@
     public class BackpropagationResult
     {
         public NetworkGradient Gradient;
-        public float Error;
+        public double Error;
 
-        public BackpropagationResult(NetworkGradient gradient, float error)
+        public BackpropagationResult(NetworkGradient gradient, double error)
         {
             Gradient = gradient;
             Error = error;

@@ -29,10 +29,10 @@ namespace NeuralNetwork
         /// Gets the value of every node in the layer.
         /// </summary>
         /// <param name="inputs">Input values to be given to each node.</param>
-        /// <returns>A float array containing the values of each node in the layer, obtained by calling CalculateValue() on them.</returns>
-        public float[] CalculateLayer(float[] inputs)
+        /// <returns>A double array containing the values of each node in the layer, obtained by calling CalculateValue() on them.</returns>
+        public double[] CalculateLayer(double[] inputs)
         {
-            float[] nodeValues = new float[Nodes.Length];
+            double[] nodeValues = new double[Nodes.Length];
 
             for (int i = 0; i < Nodes.Length; i++)
             {
@@ -48,7 +48,7 @@ namespace NeuralNetwork
         /// <param name="inputs">Input values to be given to the nodes in the layer. Initial recursive call should pass
         /// the external input values for the entire network.</param>
         /// <returns>The output values of the network after recursively forward propagating through it.</returns>
-        public float[] GetOutputLayerValues(float[] inputs)
+        public double[] GetOutputLayerValues(double[] inputs)
         {
             if (NextLayer == null)
             {
@@ -64,16 +64,16 @@ namespace NeuralNetwork
         /// Calculates the values of the nodes in every layer and gives back every node value when called from the first layer.
         /// </summary>
         /// <param name="inputs">Input values to be given to the nodes in the layer, along with previous layers' values. Initial 
-        /// recursive call should pass the external input values for the entire network in a 2d jagged float array of size
+        /// recursive call should pass the external input values for the entire network in a 2d jagged double array of size
         /// [1][*number of inputs to the network*].</param>
         /// <returns>The values of every node in the network after recursively forward propagating through it.</returns>
-        public float[][] GetAllLayerValues(float[][] inputs)
+        public double[][] GetAllLayerValues(double[][] inputs)
         {
             // The values to calculate this layer on should be the values of the last layer.
-            float[] lastLayerValues = inputs[inputs.Length - 1];
+            double[] lastLayerValues = inputs[inputs.Length - 1];
 
             // A jagged 2d array to store the values of the nodes in this layer, and the ones in previous layers.
-            float[][] groupedLayers = new float[inputs.Length + 1][];
+            double[][] groupedLayers = new double[inputs.Length + 1][];
 
             for (int i = 0; i < inputs.Length; i++)
             {

@@ -6,13 +6,13 @@
     /// </summary>
     public class Node
     {
-        public float[] Weights;
+        public double[] Weights;
 
-        public float Bias;
+        public double Bias;
 
         public Node(int nOfInputs)
         {
-            Weights = new float[nOfInputs];
+            Weights = new double[nOfInputs];
             Bias = 0;
         }
 
@@ -23,14 +23,14 @@
         /// <returns>The calculated node value, which is the sigmoid function applied to the sum of the weights times the corresponding input added to the bias:
         /// sigm(sum[n = 1 -> nOfNodes](weight_n*input_n) + bias)</returns>
         /// <exception cref="ArgumentNullException">Thrown if inputs is not provided</exception>
-        public float CalculateValue(float[] inputs)
+        public double CalculateValue(double[] inputs)
         {
             if (inputs == null)
             {
                 throw new ArgumentNullException(nameof(inputs), "Inputs must be provided to calculate value. ");
             }
 
-            float total = Bias; // Include bias in total
+            double total = Bias; // Include bias in total
             // Iterate through every input and add weight * input to total
             for (int i = 0; i < inputs.Length; i++)
             {
@@ -38,7 +38,7 @@
             }
 
             // Apply the logistic sigmoid function to total input, where sig(x) = 1 / (1 + e^-x)
-            return 1 / (1 + MathF.Exp(-total));
+            return 1 / (1 + Math.Exp(-total));
         }
 
         /// <summary>
@@ -46,7 +46,7 @@
         /// </summary>
         /// <param name="newWeights">Array containing the new weights to be assigned to this node. Size must match the original size of weights.</param>
         /// <exception cref="ArgumentException">Thrown if the size of new weights doesn't match the amount of weights this node has.</exception>
-        public void SetWeights(float[] newWeights)
+        public void SetWeights(double[] newWeights)
         {
             if (newWeights.Length != Weights.Length)
             {

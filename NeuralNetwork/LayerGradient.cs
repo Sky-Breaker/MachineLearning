@@ -2,19 +2,19 @@
 {
     public class LayerGradient
     {
-        public float[] BiasGradients
+        public double[] BiasGradients
         {
             get; 
             set;
         }
     
-        public float[,] WeightGradients
+        public double[,] WeightGradients
         {
             get;
             set;
         }
     
-        public LayerGradient(float[] biasGradients, float[,] weightGradients)
+        public LayerGradient(double[] biasGradients, double[,] weightGradients)
         {
             BiasGradients = biasGradients;
             WeightGradients = weightGradients;

@@ -2,9 +2,9 @@
 {
     public interface INode
     {
-        float[] weights { get; set; }
+        double[] weights { get; set; }
 
-        float CalculateValue(float[] inputs);
-        float CalculateValue(Node[] inputs);
+        double CalculateValue(double[] inputs);
+        double CalculateValue(Node[] inputs);
     }
 }

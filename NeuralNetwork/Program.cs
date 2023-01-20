@@ -26,14 +26,14 @@ namespace NeuralNetwork
                 Console.Out.WriteLine("Shuffling training data...");
                 trainingData.ShuffleTrainingData();
                 Console.Out.WriteLine("Shuffling Done.");
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.005f); // * MathF.Pow(0.8f, epoch)
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.005f * Math.Pow(0.8f, epoch));
             }
 
-            float correctlyLabeled = 0;
+            double correctlyLabeled = 0;
             for (int t = 0; t < trainingData.TestImages.GetSize(); t++)
             {
-                float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(t));
-                float maxOutput = -1;
+                double[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(t));
+                double maxOutput = -1;
                 int indexOfMaxOutput = 0;
                 for (int index = 0; index < networkOutput.Length; index++)
                 {
@@ -76,7 +76,7 @@ namespace NeuralNetwork
                 {
                     Console.Out.WriteLine("Incorrect format for test image number provided.");
                 }
-                float[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
+                double[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
 
                 string outputText = "Network output: ";
                 for (int i = 0; i < networkOutput.Length; i++)
@@ -103,10 +103,10 @@ namespace NeuralNetwork
 
             var testNetwork = new Network(networkSize);
 
-            var inputs = new float[networkSize[0]];
+            var inputs = new double[networkSize[0]];
             for (int i = 0; i < networkSize[0]; i++)
             {
-                float r = 32 * MathF.Pow(randomizer.NextSingle() + 0.15f,15);
+                double r = 32 * Math.Pow(randomizer.NextSingle() + 0.15f,15);
                 if (r < 0)
                 {
                     r = 0;
@@ -139,7 +139,7 @@ namespace NeuralNetwork
             Console.Out.WriteLine("Elapsed Time: " + timeSpan.TotalMilliseconds + "ms");
 
             String testOutput = "";
-            float[] backpropTestImage = new float[28 * 28];
+            double[] backpropTestImage = new double[28 * 28];
             for (int i = 0; i < 28; i++)
             {
                 for (int j = 0; j < 28; j++) {
@@ -160,7 +160,7 @@ namespace NeuralNetwork
             Console.Write(testOutput);
             
 
-            float[] expectedValues = { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+            double[] expectedValues = { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
             Network.NetworkGradient testg = testNetwork.BackpropagateNetwork(backpropTestImage, expectedValues);
 
 
@@ -185,8 +185,8 @@ namespace NeuralNetwork
             
             foreach (Node node in firstNodes)
             {
-                var randWeights = new float[node.Weights.Length];
-                var randBiases = new float[node.Weights.Length];
+                var randWeights = new double[node.Weights.Length];
+                var randBiases = new double[node.Weights.Length];
 
                 for (int i = 0; i < node.Weights.Length; i++)
                 {
@@ -200,8 +200,8 @@ namespace NeuralNetwork
 
             foreach (Node node in secondNodes)
             {
-                var randWeights = new float[node.Weights.Length];
-                var randBiases = new float[node.Weights.Length];
+                var randWeights = new double[node.Weights.Length];
+                var randBiases = new double[node.Weights.Length];
 
                 for (int i = 0; i < node.Weights.Length; i++)
                 {
@@ -215,8 +215,8 @@ namespace NeuralNetwork
 
             foreach (Node node in thirdNodes)
             {
-                var randWeights = new float[node.Weights.Length];
-                var randBiases = new float[node.Weights.Length];
+                var randWeights = new double[node.Weights.Length];
+                var randBiases = new double[node.Weights.Length];
 
                 for (int i = 0; i < node.Weights.Length; i++)
                 {
@@ -228,7 +228,7 @@ namespace NeuralNetwork
                 node.Biases = randBiases;
             }
 
-            var extInputs = new float[inputSize];
+            var extInputs = new double[inputSize];
 
             for (int i = 0; i < inputSize; i++)
             {

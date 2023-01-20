@@ -39,10 +39,10 @@
             }
         }
 
-        public float[] GetNetworkOutput(byte[] inputValues)
+        public double[] GetNetworkOutput(byte[] inputValues)
         {
             // Convert byte array of inputs to floats for the recursive layer method
-            float[] inputs = new float[inputValues.Length];
+            double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
                 inputs[i] = inputValues[i];
@@ -50,15 +50,15 @@
             return Layers[0].GetOutputLayerValues(inputs);
         }
 
-        public float[][] GetAllNetworkValues(byte[] inputValues)
+        public double[][] GetAllNetworkValues(byte[] inputValues)
         {
             // Convert byte array of inputs to floats for the recursive layer method
-            float[] inputs = new float[inputValues.Length];
+            double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
                 inputs[i] = inputValues[i];
             }
-            return Layers[0].GetAllLayerValues(new float[][] { inputs });
+            return Layers[0].GetAllLayerValues(new double[][] { inputs });
         }
 
         /// <summary>
@@ -68,7 +68,7 @@
         /// <param name="trainingLabels">ListOfData containing the training labels</param>
         /// <param name="batchSize">Number of training examples to calculate a gradient for at one time.</param>
         /// <param name="learningRate">Constant multplied to the calculated gradient to adjust the network weights and biases by.</param>
-        public void TrainNetwork(ListOfData trainingImages, ListOfData trainingLabels, int batchSize, float learningRate)
+        public void TrainNetwork(ListOfData trainingImages, ListOfData trainingLabels, int batchSize, double learningRate)
         {
             // Repeat batches until the end of the batch would exceed the last index of the training data.
             for (int batch = 0; (batch + 1) * batchSize < trainingImages.GetSize(); batch++)
@@ -78,7 +78,7 @@
                 // Do the first backpropagation, and store the gradient and error
                 BackpropagationResult backpropResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
                 NetworkGradient gradientSum = backpropResult.Gradient;
-                float errorSum = backpropResult.Error;
+                double errorSum = backpropResult.Error;
                 for (int i = 1; i < batchSize; i++)
                 {
                     index++;
@@ -105,19 +105,19 @@
         /// <param name="gradient">NetworkGradient containing calculated slopes of the cost of the network training data classifications with 
         /// respect to every network weight and bias.</param>
         /// <param name="learningRate">Constant scalar when multiplied with the negative gradient gives the adjustment for each weight and bias.</param>
-        private void AdjustNetworkValues(NetworkGradient gradient, float learningRate)
+        private void AdjustNetworkValues(NetworkGradient gradient, double learningRate)
         {
             for (int layer = 0; layer < Layers.Length; layer++)
             {
                 for (int node = 0; node < Layers[layer].Nodes.Length; node++)
                 {
                     // Because the gradient is a postive slope of cost to the respective weight or bias, the adjustment should be negative.
-                    float biasAdjustmentValue = gradient.LayerGradients[layer].BiasGradients[node] * -1 * learningRate;
+                    double biasAdjustmentValue = gradient.LayerGradients[layer].BiasGradients[node] * -1 * learningRate;
                     Layers[layer].Nodes[node].Bias += biasAdjustmentValue;
 
                     for (int weight = 0; weight < Layers[layer].Nodes[0].Weights.Length; weight++)
                     {
-                        float weightAdjustmentValue = gradient.LayerGradients[layer].WeightGradients[node, weight] * -1 * learningRate;
+                        double weightAdjustmentValue = gradient.LayerGradients[layer].WeightGradients[node, weight] * -1 * learningRate;
                         Layers[layer].Nodes[node].Weights[weight] += weightAdjustmentValue;
                     }
                 }
@@ -132,20 +132,20 @@
         /// <returns>BackpropagationResult containing the gradient of the network output cost with respect to the network weights and biases.</returns>
         public BackpropagationResult BackpropagateNetwork(byte[] inputValues, byte[] desiredOutputValues)
         {
-            float[][] nodeValues = GetAllNetworkValues(inputValues);
+            double[][] nodeValues = GetAllNetworkValues(inputValues);
             
             int layerLength = nodeValues[nodeValues.Length - 1].Length;
             NetworkGradient resultNetworkGradient;
             LayerGradient[] resultLayerGradients = new LayerGradient[nodeValues.Length - 1];
 
-            float[] outputError = new float[layerLength];
-            float[] stackedDerivs = new float[layerLength];
+            double[] outputError = new double[layerLength];
+            double[] stackedDerivs = new double[layerLength];
 
-            // float arrays for bias and weight gradients in each layer
-            float[] layerBiasGradients = new float[layerLength];
-            float[,] layerWeightGradients = new float[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
+            // double arrays for bias and weight gradients in each layer
+            double[] layerBiasGradients = new double[layerLength];
+            double[,] layerWeightGradients = new double[layerLength, nodeValues[nodeValues.Length - 2].Length]; // [node, weight]
 
-            float totalError = 0;
+            double totalError = 0;
             // Calculate the last layer partial derivatives
             for (int node = 0; node < layerLength; node++)
             {
@@ -156,7 +156,7 @@
                 {
                     layerWeightGradients[node, prevNode] = stackedDerivs[node] * nodeValues[nodeValues.Length - 2][prevNode];
                 }
-                totalError += MathF.Pow(outputError[node], 2);
+                totalError += Math.Pow(outputError[node], 2);
             }
 
             resultLayerGradients[resultLayerGradients.Length - 1] = new LayerGradient(layerBiasGradients, layerWeightGradients);
@@ -164,9 +164,9 @@
             // Calculate the partial derivatives for each preceding layer
             for (int layer = nodeValues.Length - 2; layer > 0; layer--)
             {
-                layerBiasGradients = new float[nodeValues[layer].Length];
-                layerWeightGradients = new float[nodeValues[layer].Length, nodeValues[layer - 1].Length];
-                float[] newDerivs = new float[nodeValues[layer].Length];
+                layerBiasGradients = new double[nodeValues[layer].Length];
+                layerWeightGradients = new double[nodeValues[layer].Length, nodeValues[layer - 1].Length];
+                double[] newDerivs = new double[nodeValues[layer].Length];
                 for (int node = 0; node < nodeValues[layer].Length; node++)
                 {
                     // The partial derivative of the nodes in this layer with respect to the partial derivatives of the next layer is
@@ -206,8 +206,8 @@
                 int layerSize = networkGradients[0].LayerGradients[l].BiasGradients.Length;
                 int prevLayerSize = networkGradients[0].LayerGradients[l].WeightGradients.GetUpperBound(1) + 1;
 
-                float[] biasGradientSum = new float[layerSize];
-                float[,] weightGradientSum = new float[layerSize, prevLayerSize];
+                double[] biasGradientSum = new double[layerSize];
+                double[,] weightGradientSum = new double[layerSize, prevLayerSize];
 
                 for (int g = 0; g < networkGradients.Length; g++) 
                 {
@@ -225,10 +225,10 @@
             return networkGradientSum;
         }
 
-        private static float CalculateSigmoidDerivative(float x)
+        private static double CalculateSigmoidDerivative(double x)
         {
-            float eToX = MathF.Exp(x);
-            return eToX / MathF.Pow(eToX + 1, 2);
+            double eToX = Math.Exp(x);
+            return eToX / Math.Pow(eToX + 1, 2);
         }
 
         private void SetRandomStartingWeightsAndBiases(Node node)
@@ -236,8 +236,8 @@
             var nodeInputSize = node.Weights.Length;
             var randomizer = new Random();
 
-            var randWeights = new float[nodeInputSize];
-            // var randBiases = new float[nodeInputSize];
+            var randWeights = new double[nodeInputSize];
+            // var randBiases = new double[nodeInputSize];
 
             for (int i = 0; i < nodeInputSize; i++)
             {

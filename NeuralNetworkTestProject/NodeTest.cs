@@ -33,7 +33,7 @@ namespace NeuralNetworkTestProject
 
             // Act
             // Assert
-            float[] nullFloatArray = null;
+            double[] nullFloatArray = null;
             Assert.ThrowsException<ArgumentNullException>(() => { n.CalculateValue(nullFloatArray); });
 
         }
