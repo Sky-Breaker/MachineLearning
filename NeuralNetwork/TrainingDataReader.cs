@@ -33,28 +33,28 @@ namespace NeuralNetwork
             TestLabels = PrepareLabelData(testLabelsBytes, 10000);
         }
 
-        private ListOfData PrepareImageData(byte[] trainingImagesBytes, int nOfImages)
+        private ListOfData PrepareImageData(byte[] imagesBytes, int nOfImages)
         {
             byte[,] trainingImageData = new byte[nOfImages, ImageSize];
-            for (int i = 16; i < trainingImagesBytes.Length; i++)
+            for (int i = 16; i < imagesBytes.Length; i++)
             {
                 int currentImage = (i - 16) / ImageSize;
                 int pixelX = (i - 16) % ImageSize;
                 //int pixelY = ((i - 16) / ImageSize + 1) % ImageSize;
-                trainingImageData[currentImage, pixelX] = trainingImagesBytes[i];
+                trainingImageData[currentImage, pixelX] = imagesBytes[i];
             }
             return new ListOfData(trainingImageData);
         }
 
-        private ListOfData PrepareLabelData(byte[] trainingLabelsBytes, int nOfLabels)
+        private ListOfData PrepareLabelData(byte[] labelsBytes, int nOfLabels)
         {
             byte[,] trainingLabelData = new byte[nOfLabels,10];
-            for (int i = 8; i < trainingLabelsBytes.Length; i++)
+            for (int i = 8; i < labelsBytes.Length; i++)
             {
                 byte[] label = new byte[10];
                 for (int labelNumber = 0; labelNumber <= 9; labelNumber++)
                 {
-                    if (labelNumber == trainingLabelsBytes[i])
+                    if (labelNumber == labelsBytes[i])
                     {
                         label[labelNumber] = 1;
                     }
