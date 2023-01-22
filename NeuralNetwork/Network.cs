@@ -45,7 +45,7 @@
             double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = inputValues[i];
+                inputs[i] = (inputValues[i] - 128) / 127;
             }
             return Layers[0].GetOutputLayerValues(inputs);
         }
@@ -56,7 +56,7 @@
             double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = inputValues[i];
+                inputs[i] = (inputValues[i] - 128) / 127;
             }
             return Layers[0].GetAllLayerValues(new double[][] { inputs });
         }
