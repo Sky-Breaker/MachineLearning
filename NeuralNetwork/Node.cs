@@ -10,10 +10,14 @@
 
         public double Bias;
 
-        public Node(int nOfInputs)
+        private ActivationFunction NodeOutputFunction;
+
+        public Node(int nOfInputs, ActivationFunction activationFunction)
         {
             Weights = new double[nOfInputs];
             Bias = 0;
+
+            NodeOutputFunction = activationFunction;
         }
 
         /// <summary>
@@ -38,7 +42,8 @@
             }
 
             // Apply the logistic sigmoid function to total input, where sig(x) = 1 / (1 + e^-x)
-            return 1 / (1 + Math.Exp(-total));
+            // return 1 / (1 + Math.Exp(-total));
+            return NodeOutputFunction.ValueAt(total);
         }
 
         /// <summary>

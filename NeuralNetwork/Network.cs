@@ -3,18 +3,21 @@
     public class Network
     {
         private Layer[] Layers;
+        private ActivationFunction NodeOutputFunction;
 
         /// <param name="layerSizes">
         /// int[] whose elements are the length of each layer, from input to output. layerSizes[0] is the number of inputs of the network.
         /// The length of layerSizes must be at least 2 so the network can have a minimum of one layer.
         /// </param>
         /// <exception cref="ArgumentException">Thrown if the length of layerSizes is less than 2.</exception>
-        public Network(int[] layerSizes)
+        public Network(int[] layerSizes, ActivationFunction activationFunction)
         {
             if (layerSizes.Length < 2)
             {
                 throw new ArgumentException("Cannot create a network with less than 1 layer. layerSizes must be > 2. ", nameof(layerSizes));
             }
+
+            NodeOutputFunction = activationFunction;
 
             // layerSizes contains the input size, so the amount of Layers in the network is one less than the length of layerSizes
             Layers = new Layer[layerSizes.Length - 1];
@@ -30,7 +33,7 @@
                 for (int n = 0; n < nodes.Length; n++)
                 {
                     // Each node needs the size of the previous layer (or inputs), which is at index l for layer l because index 0 is the number of network inputs.
-                    nodes[n] = new Node(layerSizes[l]);
+                    nodes[n] = new Node(layerSizes[l], NodeOutputFunction);
                     SetRandomStartingWeightsAndBiases(nodes[n]);
                 }
                 // Each layer is created with a reference to the next layer. The last layer's reference is null so recursion on the layers can end.
@@ -45,7 +48,7 @@
             double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = (inputValues[i] - 128) / 127;
+                inputs[i] = inputValues[i] / 255;
             }
             return Layers[0].GetOutputLayerValues(inputs);
         }
@@ -56,7 +59,7 @@
             double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = (inputValues[i] - 128) / 127;
+                inputs[i] = inputValues[i] / 255;
             }
             return Layers[0].GetAllLayerValues(new double[][] { inputs });
         }
@@ -150,7 +153,8 @@
             for (int node = 0; node < layerLength; node++)
             {
                 outputError[node] = nodeValues[nodeValues.Length - 1][node] - desiredOutputValues[node];
-                stackedDerivs[node] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][node]) * 2 * outputError[node];
+                //stackedDerivs[node] = CalculateSigmoidDerivative(nodeValues[nodeValues.Length - 1][node]) * 2 * outputError[node];
+                stackedDerivs[node] = NodeOutputFunction.DerivativeAt(nodeValues[nodeValues.Length - 1][node]) * 2 * outputError[node];
                 layerBiasGradients[node] = stackedDerivs[node];
                 for (int prevNode = 0; prevNode < nodeValues[nodeValues.Length - 2].Length; prevNode++)
                 {
@@ -174,7 +178,8 @@
                     for (int nextNode = 0; nextNode < nodeValues[layer + 1].Length; nextNode++) {
                         newDerivs[node] = newDerivs[node] + stackedDerivs[nextNode] * Layers[layer].Nodes[nextNode].Weights[node];
                     }
-                    newDerivs[node] *= CalculateSigmoidDerivative(nodeValues[layer][node]);
+                    //newDerivs[node] *= CalculateSigmoidDerivative(nodeValues[layer][node]);
+                    newDerivs[node] *= NodeOutputFunction.DerivativeAt(nodeValues[layer][node]);
                     layerBiasGradients[node] = newDerivs[node];
                     for (int prevNode = 0; prevNode < nodeValues[layer - 1].Length; prevNode++)
                     {
@@ -225,11 +230,13 @@
             return networkGradientSum;
         }
 
+        /*
         private static double CalculateSigmoidDerivative(double x)
         {
             double eToX = Math.Exp(x);
             return eToX / Math.Pow(eToX + 1, 2);
         }
+        */
 
         private void SetRandomStartingWeightsAndBiases(Node node)
         {

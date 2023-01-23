@@ -15,18 +15,19 @@ namespace NeuralNetwork
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
-            var networkSize = new int[3] { 784, 300, 10 };
+            var networkSize = new int[3] { 784, 200, 10 };
 
-            var network = new Network(networkSize);
+            var activationFunction = new ReLUFunction();
+            var network = new Network(networkSize, activationFunction);
 
-            int epochs = 6;
+            int epochs = 1;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
                 Console.Out.WriteLine("Epoch: " + epoch);
                 Console.Out.WriteLine("Shuffling training data...");
-                trainingData.ShuffleTrainingData();
+                //trainingData.ShuffleTrainingData();
                 Console.Out.WriteLine("Shuffling Done.");
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.005f * Math.Pow(0.8f, epoch));
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 100, 0.005f); // * Math.Pow(0.6f, epoch)
             }
 
             double correctlyLabeled = 0;
@@ -60,9 +61,11 @@ namespace NeuralNetwork
 
             Console.Out.WriteLine("Percent correct: " + (correctlyLabeled / trainingData.TestImages.GetSize()) * 100);
 
-
-
             /*
+            Console.Out.WriteLine("Shuffling training data...");
+            trainingData.ShuffleTrainingData();
+            Console.Out.WriteLine("Shuffling Done.");
+
             while (true)
             {
                 Console.Out.WriteLine("Enter a test image number:");
@@ -76,6 +79,8 @@ namespace NeuralNetwork
                 {
                     Console.Out.WriteLine("Incorrect format for test image number provided.");
                 }
+
+                /*
                 double[] networkOutput = network.GetNetworkOutput(trainingData.TestImages.GetValuesAtIndex(testImageNumber));
 
                 string outputText = "Network output: ";
@@ -84,17 +89,38 @@ namespace NeuralNetwork
                     outputText += i + "-" + networkOutput[i] + ", ";
                 }
 
-                string correctOutputText = "Expected output: ";
-                for (int i = 0; i < networkOutput.Length; i++)
+                String testOutput = "";
+                double[] backpropTestImage = new double[28 * 28];
+                for (int i = 0; i < 28; i++)
                 {
-                    correctOutputText += i + "-" + trainingData.TestLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
+                    for (int j = 0; j < 28; j++)
+                    {
+                        Boolean PixelIsOn = trainingData.TrainingImages.GetValuesAtIndex(testImageNumber)[i * 28 + j] > 0;
+                        if (PixelIsOn)
+                        {
+                            testOutput += "*";
+                        }
+                        else
+                        {
+                            testOutput += " ";
+                        }
+                        backpropTestImage[28 * i + j] = trainingData.TrainingImages.GetValuesAtIndex(testImageNumber)[i * 28 + j];
+                    }
+                    testOutput += "\n";
                 }
 
-                Console.WriteLine(outputText);
+                Console.Write(testOutput);
+
+                string correctOutputText = "Expected output: ";
+                for (int i = 0; i < 10; i++)
+                {
+                    correctOutputText += i + "-" + trainingData.TrainingLabels.GetValuesAtIndex(testImageNumber)[i] + ", ";
+                }
+
+                // Console.WriteLine(outputText);
                 Console.WriteLine(correctOutputText);
             }
             */
-
 
             /*
             var randomizer = new Random();
