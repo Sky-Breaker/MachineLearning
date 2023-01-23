@@ -25,9 +25,9 @@ namespace NeuralNetwork
             {
                 Console.Out.WriteLine("Epoch: " + epoch);
                 Console.Out.WriteLine("Shuffling training data...");
-                //trainingData.ShuffleTrainingData();
+                trainingData.ShuffleTrainingData();
                 Console.Out.WriteLine("Shuffling Done.");
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 100, 0.005f); // * Math.Pow(0.6f, epoch)
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.001f); //* Math.Pow(0.8f, epoch)
             }
 
             double correctlyLabeled = 0;
