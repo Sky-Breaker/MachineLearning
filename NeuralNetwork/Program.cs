@@ -15,19 +15,19 @@ namespace NeuralNetwork
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
-            var networkSize = new int[3] { 784, 200, 10 };
+            var networkSize = new int[3] { 784, 300, 10 };
 
             var activationFunction = new ReLUFunction();
             var network = new Network(networkSize, activationFunction);
 
-            int epochs = 1;
+            int epochs = 8;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
                 Console.Out.WriteLine("Epoch: " + epoch);
                 Console.Out.WriteLine("Shuffling training data...");
                 trainingData.ShuffleTrainingData();
                 Console.Out.WriteLine("Shuffling Done.");
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.001f); //* Math.Pow(0.8f, epoch)
+                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.0005-(0.00002*epoch)); //* Math.Pow(0.8, epoch)
             }
 
             double correctlyLabeled = 0;
