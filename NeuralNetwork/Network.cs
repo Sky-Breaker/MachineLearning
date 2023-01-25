@@ -48,7 +48,7 @@
             double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = inputValues[i] / 255;
+                inputs[i] = inputValues[i] / 255.0;
             }
             return Layers[0].GetOutputLayerValues(inputs);
         }
@@ -59,7 +59,7 @@
             double[] inputs = new double[inputValues.Length];
             for (int i = 0; i < inputs.Length; i++)
             {
-                inputs[i] = inputValues[i] / 255;
+                inputs[i] = inputValues[i] / 255.0;
             }
             return Layers[0].GetAllLayerValues(new double[][] { inputs });
         }
@@ -248,11 +248,11 @@
 
             for (int i = 0; i < nodeInputSize; i++)
             {
-                randWeights[i] = (randomizer.NextSingle() - 0.5f) * 1f;
+                randWeights[i] = (randomizer.NextSingle() - 0.5) * 0.01;
                 //randBiases[i] = randomizer.NextSingle() - 0.5f;
             }
 
-            var randBias = randomizer.NextSingle() * 1f;
+            var randBias = randomizer.NextSingle() * 0.01;
             node.SetWeights(randWeights);
             node.Bias = randBias;
         }
