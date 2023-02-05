@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace NeuralNetwork
 {
@@ -18,6 +19,8 @@ namespace NeuralNetwork
         public int ImageSize;
         public int LabelSize;
 
+        public int[] trainingDataIndicies;
+
         public TrainingDataReader(string trainingImagesFilePath, string trainingLabelsFilePath, string testImagesFilePath, string testLabelsFilePath) {
             byte[] trainingImagesBytes = File.ReadAllBytes(trainingImagesFilePath);
             byte[] trainingLabelsBytes = File.ReadAllBytes(trainingLabelsFilePath);
@@ -31,6 +34,12 @@ namespace NeuralNetwork
             TrainingLabels = PrepareLabelData(trainingLabelsBytes, 60000);
             TestImages = PrepareImageData(testImageBytes, 10000);
             TestLabels = PrepareLabelData(testLabelsBytes, 10000);
+
+            trainingDataIndicies = new int[TrainingImages.GetSize()];
+            for (int i = 0; i < trainingDataIndicies.Length; i++)
+            {
+                trainingDataIndicies[i] = i;
+            }
         }
 
         private ListOfData PrepareImageData(byte[] imagesBytes, int nOfImages)
@@ -76,14 +85,28 @@ namespace NeuralNetwork
         public void ShuffleTrainingData()
         {
             Random randomizer = new Random();
-            int trainingDataSize = TrainingImages.GetSize();
+            int trainingDataSize = trainingDataIndicies.Length;
+            /*
             for (int i = 0; i < trainingDataSize - 1; i++)
             {
                 int randomIndex = randomizer.Next(i, trainingDataSize);
                 SwapData(i, randomIndex);
             }
+            */
+            Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
+            for (int i = 0; i < trainingDataSize - 1; i++)
+            {
+                int randomIndex = randomizer.Next(i, trainingDataSize);
+                int tempValue = trainingDataIndicies[i];
+                trainingDataIndicies[i] = trainingDataIndicies[randomIndex];
+                trainingDataIndicies[randomIndex] = tempValue;
+            }
+            timer.Stop();
+            var elapsedMs = timer.ElapsedMilliseconds;
+            Console.WriteLine("Shuffle elapsed Ms: " + elapsedMs);
         }
 
+        /*
         private void SwapData(int index, int randomIndex)
         {
             byte[] tempImage = new byte[ImageSize];
@@ -105,5 +128,6 @@ namespace NeuralNetwork
             TrainingImages.SetValuesAtIndex(randomIndex, tempImage);
             TrainingLabels.SetValuesAtIndex(randomIndex, tempLabel);
         }
+        */
     }
 }

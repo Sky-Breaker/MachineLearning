@@ -76,23 +76,27 @@
         /// <param name="trainingLabels">ListOfData containing the training labels</param>
         /// <param name="batchSize">Number of training examples to calculate a gradient for at one time.</param>
         /// <param name="learningRate">Constant multplied to the calculated gradient to adjust the network weights and biases by.</param>
-        public void TrainNetwork(ListOfData trainingImages, ListOfData trainingLabels, int batchSize, double learningRate)
+        public void TrainNetwork(TrainingDataReader trainingData, int batchSize, double learningRate)
         {
+            ListOfData trainingImages = trainingData.TrainingImages;
+            ListOfData trainingLabels = trainingData.TrainingLabels;
             // Repeat batches until the end of the batch would exceed the last index of the training data.
             for (int batch = 0; (batch + 1) * batchSize < trainingImages.GetSize(); batch++)
             {
                 int index = batch * batchSize;
-                
+                byte[] image = trainingImages.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
+                byte[] label = trainingLabels.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
                 // Do the first backpropagation, and store the gradient and error
-                BackpropagationResult backpropResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                BackpropagationResult backpropResult = BackpropagateNetwork(image, label);
                 NetworkGradient gradientSum = backpropResult.Gradient;
                 double errorSum = backpropResult.Error;
                 for (int i = 1; i < batchSize; i++)
                 {
                     index++;
-                    
+                    image = trainingImages.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
+                    label = trainingLabels.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
                     // Do another backpropagation, and combine it with the last gradient to keep a sum.
-                    backpropResult = BackpropagateNetwork(trainingImages.GetValuesAtIndex(index), trainingLabels.GetValuesAtIndex(index));
+                    backpropResult = BackpropagateNetwork(image, label);
                     NetworkGradient newGradient = backpropResult.Gradient;
                     errorSum += backpropResult.Error;
 

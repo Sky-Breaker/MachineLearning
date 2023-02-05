@@ -17,7 +17,7 @@ namespace NeuralNetwork
 
             var networkSize = new int[3] { 784, 300, 10 };
 
-            var activationFunction = new ReLUFunction();
+            var activationFunction = new SigmoidFunction();
             var network = new Network(networkSize, activationFunction);
 
             int epochs = 8;
@@ -27,7 +27,7 @@ namespace NeuralNetwork
                 Console.Out.WriteLine("Shuffling training data...");
                 trainingData.ShuffleTrainingData();
                 Console.Out.WriteLine("Shuffling Done.");
-                network.TrainNetwork(trainingData.TrainingImages, trainingData.TrainingLabels, 400, 0.0005-(0.00002*epoch)); //* Math.Pow(0.8, epoch)
+                network.TrainNetwork(trainingData, 200, 0.001 - (0.0002 * epoch)); //   | * Math.Pow(0.8, epoch)
             }
 
             double correctlyLabeled = 0;
