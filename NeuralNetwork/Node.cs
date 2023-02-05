@@ -15,13 +15,8 @@
         public Node(int nOfInputs, ActivationFunction activationFunction)
         {
             Weights = new double[nOfInputs];
-            Bias = 0.1;
+            Bias = 0;
 
-            Random randomizer = new Random();
-            for (int i = 0; i < Weights.Length; i++)
-            {
-                Weights[i] = randomizer.NextDouble() - 0.5;
-            }
             NodeOutputFunction = activationFunction;
         }
 
@@ -64,6 +59,23 @@
             }
 
             Weights = newWeights;
+        }
+
+        public void SetRandomStartingWeightsAndBiases()
+        {
+            var nodeInputSize = Weights.Length;
+            var randomizer = new Random();
+
+            var randWeights = new double[nodeInputSize];
+
+            for (int i = 0; i < nodeInputSize; i++)
+            {
+                randWeights[i] = randomizer.NextDouble() - 0.5;
+            }
+
+            var randBias = randomizer.NextDouble() - 0.5;
+            Weights = randWeights;
+            Bias = randBias;
         }
     }
 }

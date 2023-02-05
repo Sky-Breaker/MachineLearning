@@ -235,31 +235,5 @@
             return networkGradientSum;
         }
 
-        /*
-        private static double CalculateSigmoidDerivative(double x)
-        {
-            double eToX = Math.Exp(x);
-            return eToX / Math.Pow(eToX + 1, 2);
-        }
-        */
-
-        private void SetRandomStartingWeightsAndBiases(Node node)
-        {
-            var nodeInputSize = node.Weights.Length;
-            var randomizer = new Random();
-
-            var randWeights = new double[nodeInputSize];
-            // var randBiases = new double[nodeInputSize];
-
-            for (int i = 0; i < nodeInputSize; i++)
-            {
-                randWeights[i] = randomizer.NextDouble() - 0.5;
-                //randBiases[i] = randomizer.NextSingle() - 0.5f;
-            }
-
-            var randBias = randomizer.NextDouble() - 0.5;
-            node.SetWeights(randWeights);
-            node.Bias = randBias;
-        }
     }
 }

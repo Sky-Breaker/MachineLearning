@@ -29,7 +29,9 @@ namespace NeuralNetwork
             Nodes = new Node[layerSize];
             for (int n = 0; n < layerSize; n++)
             {
-                Nodes[n] = new Node(prevLayerSize, activationFunction);
+                Node node = new Node(prevLayerSize, activationFunction);
+                node.SetRandomStartingWeightsAndBiases();
+                Nodes[n] = node;
             }
             NextLayer = nextLayer;
             NodeActivationFunction = activationFunction;
