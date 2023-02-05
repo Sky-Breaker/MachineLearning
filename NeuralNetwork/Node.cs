@@ -15,8 +15,13 @@
         public Node(int nOfInputs, ActivationFunction activationFunction)
         {
             Weights = new double[nOfInputs];
-            Bias = 0;
+            Bias = 0.1;
 
+            Random randomizer = new Random();
+            for (int i = 0; i < Weights.Length; i++)
+            {
+                Weights[i] = randomizer.NextDouble() - 0.5;
+            }
             NodeOutputFunction = activationFunction;
         }
 

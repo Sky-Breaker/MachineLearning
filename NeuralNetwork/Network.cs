@@ -27,6 +27,7 @@
             // Because each layer needs a reference to the next layer, the last layer is created first followed by the previous layers.
             for (int l = Layers.Length - 1; l >= 0; l--)
             {
+                /*
                 // Since layerSizes contains the input size at index 0, the layer size will be at the next index in layerSizes from the corresponding Layer index l.
                 var nodes = new Node[layerSizes[l + 1]];
                 // For every Node in layer l:
@@ -38,6 +39,10 @@
                 }
                 // Each layer is created with a reference to the next layer. The last layer's reference is null so recursion on the layers can end.
                 Layers[l] = new Layer(nodes, nextLayer);
+                */
+                int layerSize = layerSizes[l + 1];
+                int prevLayerSize = layerSizes[l];
+                Layers[l] = new Layer(layerSize, prevLayerSize, nextLayer, NodeOutputFunction);
                 nextLayer = Layers[l];
             }
         }
@@ -205,7 +210,7 @@
         {
             int layers = networkGradients[0].LayerGradients.Length;
             LayerGradient[] layerGradientsSum = new LayerGradient[layers];
-            
+
             for (int l = 0; l < layers; l++) 
             {
                 int layerSize = networkGradients[0].LayerGradients[l].BiasGradients.Length;
@@ -248,11 +253,11 @@
 
             for (int i = 0; i < nodeInputSize; i++)
             {
-                randWeights[i] = (randomizer.NextSingle() - 0.5) * 0.01;
+                randWeights[i] = randomizer.NextDouble() - 0.5;
                 //randBiases[i] = randomizer.NextSingle() - 0.5f;
             }
 
-            var randBias = randomizer.NextSingle() * 0.01;
+            var randBias = randomizer.NextDouble() - 0.5;
             node.SetWeights(randWeights);
             node.Bias = randBias;
         }

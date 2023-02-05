@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace NeuralNetwork
 {
@@ -20,9 +21,18 @@ namespace NeuralNetwork
 
         private Layer NextLayer;
 
-        public Layer(Node[] nodeList, Layer nextLayer) {
-            Nodes = nodeList;
+        private ActivationFunction NodeActivationFunction;
+
+
+        public Layer(int layerSize, int prevLayerSize, Layer nextLayer, ActivationFunction activationFunction)
+        {
+            Nodes = new Node[layerSize];
+            for (int n = 0; n < layerSize; n++)
+            {
+                Nodes[n] = new Node(prevLayerSize, activationFunction);
+            }
             NextLayer = nextLayer;
+            NodeActivationFunction = activationFunction;
         }
 
         /// <summary>
