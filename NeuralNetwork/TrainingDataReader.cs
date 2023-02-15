@@ -103,7 +103,7 @@ namespace NeuralNetwork
             }
             timer.Stop();
             var elapsedMs = timer.ElapsedMilliseconds;
-            Console.WriteLine("Shuffle elapsed Ms: " + elapsedMs);
+            Console.Out.WriteLine("Shuffle elapsed Ms: " + elapsedMs);
         }
 
         /*

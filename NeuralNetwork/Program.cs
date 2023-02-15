@@ -1,17 +1,22 @@
-﻿using System.ComponentModel;
-using System.Xml.Linq;
+﻿using System.Runtime.InteropServices;
 
 namespace NeuralNetwork
 {
     internal class Program
     {
+        [DllImport("NvidiaGPUAcceleration.dll", EntryPoint = "initializeGPUMatrixAcceleration")]
+        public static extern int initializeGPUMatrixAcceleration();
+
         static void Main(string[] args)
         {
-            
-            String trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
-            String trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
-            String testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-images.idx3-ubyte";
-            String testLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-labels.idx1-ubyte";
+            var testVal = initializeGPUMatrixAcceleration();
+            Console.Out.WriteLine(testVal);
+
+            /*
+            string trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
+            string trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
+            string testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-images.idx3-ubyte";
+            string testLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-labels.idx1-ubyte";
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
@@ -60,6 +65,7 @@ namespace NeuralNetwork
             }
 
             Console.Out.WriteLine("Percent correct: " + (correctlyLabeled / trainingData.TestImages.GetSize()) * 100);
+            */
 
             /*
             Console.Out.WriteLine("Shuffling training data...");
