@@ -86,8 +86,12 @@
                 int index = batch * batchSize;
                 byte[] image = trainingImages.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
                 byte[] label = trainingLabels.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 // Do the first backpropagation, and store the gradient and error
                 BackpropagationResult backpropResult = BackpropagateNetwork(image, label);
+                watch.Stop();
+                var time = watch.ElapsedMilliseconds;
+                Console.Out.WriteLine("Backpropagation time: " + time);
                 NetworkGradient gradientSum = backpropResult.Gradient;
                 double errorSum = backpropResult.Error;
                 for (int i = 1; i < batchSize; i++)
