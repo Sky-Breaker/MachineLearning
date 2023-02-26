@@ -2,17 +2,24 @@
 
 namespace NeuralNetwork
 {
-    internal class Program
+    public class Program
     {
         [DllImport("NvidiaGPUAcceleration.dll", EntryPoint = "initializeGPUMatrixAcceleration")]
-        public static extern int initializeGPUMatrixAcceleration();
-
-        static void Main(string[] args)
+        public static extern bool initializeGPUMatrixAcceleration();
+        
+        public static void Main(string[] args)
         {
-            var testVal = initializeGPUMatrixAcceleration();
-            Console.Out.WriteLine(testVal);
+            var gpuInitialized = initializeGPUMatrixAcceleration();
+            if (gpuInitialized)
+            {
+                Console.Out.WriteLine("GPU initialization succeeded.");
+            } 
+            else
+            {
+                Console.Out.WriteLine("GPU initialization failed.");
+            }
 
-            /*
+            
             string trainingImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-images.idx3-ubyte";
             string trainingLabelsFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\train-labels.idx1-ubyte";
             string testImagesFilePath = "C:\\Users\\ffpil\\OneDrive\\Documents\\Projects\\MNISTDataset\\UnzippedTrainingData\\t10k-images.idx3-ubyte";
@@ -65,7 +72,7 @@ namespace NeuralNetwork
             }
 
             Console.Out.WriteLine("Percent correct: " + (correctlyLabeled / trainingData.TestImages.GetSize()) * 100);
-            */
+
 
             /*
             Console.Out.WriteLine("Shuffling training data...");
