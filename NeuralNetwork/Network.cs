@@ -243,5 +243,48 @@
             return networkGradientSum;
         }
 
+        private static NetworkGradient AverageNetworkGradients(NetworkGradient[] networkGradients)
+        {
+            int layers = networkGradients[0].LayerGradients.Length;
+            LayerGradient[] averageLayerGradients = new LayerGradient[layers];
+
+            // for every layer
+                // for every gradient
+                    //store 1d array of values for this index
+                    //for every index in this layer
+                        //add values at this position to array
+
+            for (int layer = 0; layer < layers; layer++)
+            {
+                int layerSize = networkGradients[0].LayerGradients[layer].BiasGradients.Length;
+                int prevLayerSize = networkGradients[0].LayerGradients[layer].WeightGradients.GetUpperBound(1) + 1;
+                double[] averageLayerBiases = new double[layerSize];
+                double[,] averageLayerWeights = new double[layerSize, prevLayerSize];
+                for (int bias = 0; bias < layerSize; bias++)
+                {
+                    double[] biases = new double[networkGradients.Length];
+                    for (int gradient = 0; gradient < networkGradients.Length; gradient++)
+                    {
+                        biases[gradient] = networkGradients[gradient].LayerGradients[layer].BiasGradients[bias];
+                    }
+                    averageLayerBiases[bias] = biases.Average();
+                    for (int weight = 0; weight < prevLayerSize; weight++)
+                    {
+                        double[] weights = new double[networkGradients.Length];
+                        for (int gradient = 0; gradient < networkGradients.Length; gradient++)
+                        {
+                            weights[gradient] = networkGradients[gradient].LayerGradients[layer].WeightGradients[bias, weight];
+                        }
+                        averageLayerWeights[bias, weight] = weights.Average();
+                    }
+                }
+                averageLayerGradients[layer] = new LayerGradient(averageLayerBiases, averageLayerWeights);
+            }
+
+            NetworkGradient averageGradient = new NetworkGradient(averageLayerGradients);
+            return averageGradient;
+        }
+
+
     }
 }
