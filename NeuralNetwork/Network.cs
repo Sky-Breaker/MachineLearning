@@ -83,6 +83,7 @@
             // Repeat batches until the end of the batch would exceed the last index of the training data.
             for (int batch = 0; (batch + 1) * batchSize < trainingImages.GetSize(); batch++)
             {
+                /*
                 int index = batch * batchSize;
                 byte[] image = trainingImages.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
                 byte[] label = trainingLabels.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
@@ -110,8 +111,26 @@
 
                     gradientSum = SumNetworkGradients(gradientsToCombine);
                 }
+                */
+
+                int index = batch * batchSize;
+                NetworkGradient[] resultGradients = new NetworkGradient[batchSize];
+                double errorSum = 0;
+                for (int i = 0; i < batchSize; i++)
+                {
+                    byte[] image = trainingImages.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
+                    byte[] label = trainingLabels.GetValuesAtIndex(trainingData.trainingDataIndicies[index]);
+
+                    BackpropagationResult backpropResult = BackpropagateNetwork(image, label);
+                    resultGradients[i] = backpropResult.Gradient;
+                    errorSum += backpropResult.Error;
+
+                    index++;
+                }
+                NetworkGradient averageGradient = AverageNetworkGradients(resultGradients);
+
                 Console.Out.WriteLine("Error: " + errorSum / batchSize);
-                AdjustNetworkValues(gradientSum, learningRate);
+                AdjustNetworkValues(averageGradient, learningRate);
             }
         }
 
@@ -247,12 +266,6 @@
         {
             int layers = networkGradients[0].LayerGradients.Length;
             LayerGradient[] averageLayerGradients = new LayerGradient[layers];
-
-            // for every layer
-                // for every gradient
-                    //store 1d array of values for this index
-                    //for every index in this layer
-                        //add values at this position to array
 
             for (int layer = 0; layer < layers; layer++)
             {
