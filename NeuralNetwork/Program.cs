@@ -27,19 +27,30 @@ namespace NeuralNetwork
 
             TrainingDataReader trainingData = new TrainingDataReader(trainingImagesFilePath, trainingLabelsFilePath, testImagesFilePath, testLabelsFilePath);
 
+            /*
             var networkSize = new int[3] { 784, 300, 10 };
 
             var activationFunction = new SigmoidFunction();
-            var network = new Network(networkSize, activationFunction);
+            var network = new Network(networkSize);
+            */
 
-            int epochs = 8;
+            string networkSaveLocation = Path.GetTempPath() + "TestNetworkSave.json";
+            
+            /*
+            Console.WriteLine(networkSaveLocation);
+            NetworkStorer.Save(network, networkSaveLocation);
+            */
+            var network = NetworkStorer.Load(networkSaveLocation);
+
+            
+            int epochs = 4;
             for (int epoch = 0; epoch < epochs; epoch++)
             {
                 Console.Out.WriteLine("Epoch: " + epoch);
                 Console.Out.WriteLine("Shuffling training data...");
                 trainingData.ShuffleTrainingData();
                 Console.Out.WriteLine("Shuffling Done.");
-                network.TrainNetwork(trainingData, 200, 0.001 - (0.0002 * epoch)); //   | * Math.Pow(0.8, epoch)
+                network.TrainNetwork(trainingData, 200, 0.1); // - (0.002 * epoch) | * Math.Pow(0.8, epoch)
             }
 
             double correctlyLabeled = 0;
@@ -72,6 +83,11 @@ namespace NeuralNetwork
             }
 
             Console.Out.WriteLine("Percent correct: " + (correctlyLabeled / trainingData.TestImages.GetSize()) * 100);
+
+
+
+
+
 
 
             /*

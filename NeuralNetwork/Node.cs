@@ -1,4 +1,6 @@
-﻿namespace NeuralNetwork
+﻿using System.Text.Json.Serialization;
+
+namespace NeuralNetwork
 {
     /// <summary>
     /// Individual part of the neural network that contains a value. This value is calculated either from a sum of stored weights and a bias
@@ -6,18 +8,24 @@
     /// </summary>
     public class Node
     {
+        [JsonInclude]
         public double[] Weights;
 
+        [JsonInclude]
         public double Bias;
 
-        private ActivationFunction NodeOutputFunction;
+        [JsonInclude]
+        public int nOfInputs;
 
-        public Node(int nOfInputs, ActivationFunction activationFunction)
+        public ActivationFunction NodeOutputFunction = new SigmoidFunction();
+
+        public Node(int nOfInputs)
         {
             Weights = new double[nOfInputs];
             Bias = 0;
 
-            NodeOutputFunction = activationFunction;
+            //NodeOutputFunction = activationFunction;
+            this.nOfInputs = nOfInputs;
         }
 
         /// <summary>

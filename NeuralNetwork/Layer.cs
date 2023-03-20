@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -19,22 +20,32 @@ namespace NeuralNetwork
             get;
         }
 
-        private Layer NextLayer;
+        [JsonInclude]
+        public Layer NextLayer;
 
-        private ActivationFunction NodeActivationFunction;
+        //private ActivationFunction NodeActivationFunction;
 
+        [JsonInclude]
+        public int layerSize;
 
-        public Layer(int layerSize, int prevLayerSize, Layer nextLayer, ActivationFunction activationFunction)
+        [JsonInclude]
+        public int prevLayerSize;
+
+        public Layer(int layerSize, int prevLayerSize, Layer nextLayer)
         {
             Nodes = new Node[layerSize];
             for (int n = 0; n < layerSize; n++)
             {
-                Node node = new Node(prevLayerSize, activationFunction);
+                Node node = new Node(prevLayerSize);
                 node.SetRandomStartingWeightsAndBiases();
                 Nodes[n] = node;
             }
             NextLayer = nextLayer;
-            NodeActivationFunction = activationFunction;
+            //NodeActivationFunction = activationFunction;
+
+            this.layerSize = layerSize;
+
+            this.prevLayerSize = prevLayerSize;
         }
 
         /// <summary>

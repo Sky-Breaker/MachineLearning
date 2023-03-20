@@ -1,23 +1,30 @@
-﻿namespace NeuralNetwork
+﻿using System.Text.Json.Serialization;
+
+namespace NeuralNetwork
 {
     public class Network
     {
-        private Layer[] Layers;
-        private ActivationFunction NodeOutputFunction;
+        [JsonInclude]
+        public Layer[] Layers;
+
+        [JsonInclude]
+        public int[] layerSizes;
+
+        public ActivationFunction NodeOutputFunction = new SigmoidFunction();
 
         /// <param name="layerSizes">
         /// int[] whose elements are the length of each layer, from input to output. layerSizes[0] is the number of inputs of the network.
         /// The length of layerSizes must be at least 2 so the network can have a minimum of one layer.
         /// </param>
         /// <exception cref="ArgumentException">Thrown if the length of layerSizes is less than 2.</exception>
-        public Network(int[] layerSizes, ActivationFunction activationFunction)
+        public Network(int[] layerSizes)
         {
             if (layerSizes.Length < 2)
             {
                 throw new ArgumentException("Cannot create a network with less than 1 layer. layerSizes must be > 2. ", nameof(layerSizes));
             }
 
-            NodeOutputFunction = activationFunction;
+            //NodeOutputFunction = activationFunction;
 
             // layerSizes contains the input size, so the amount of Layers in the network is one less than the length of layerSizes
             Layers = new Layer[layerSizes.Length - 1];
@@ -42,9 +49,11 @@
                 */
                 int layerSize = layerSizes[l + 1];
                 int prevLayerSize = layerSizes[l];
-                Layers[l] = new Layer(layerSize, prevLayerSize, nextLayer, NodeOutputFunction);
+                Layers[l] = new Layer(layerSize, prevLayerSize, nextLayer);
                 nextLayer = Layers[l];
             }
+
+            this.layerSizes = layerSizes;
         }
 
         public double[] GetNetworkOutput(byte[] inputValues)
